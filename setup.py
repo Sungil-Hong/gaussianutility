@@ -5,12 +5,13 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="gaussianutility",
-    version="0.0.1",
+    version="0.1.0",
     author="Sungil Hong",
     author_email="suh33@pitt.edu",
     description="Useful utilities to use Gaussian09 software",
     long_description=long_description,
     long_description_content_type="text/markdown",
+    entry_points={'console_scripts': ['xgeom=gaussianutility.xgeom']},
     url="https://github.com/Sungil-Hong/gaussianutility",
     packages=setuptools.find_packages(),
     classifiers=[
