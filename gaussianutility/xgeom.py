@@ -3,6 +3,9 @@ import sys
 import numpy as np
 from periodictable import elements
 
+def main():
+    pass
+
 if __name__ == '__main__':
     if '-' not in sys.argv[1:]:
         file_list = sys.argv[1:]
