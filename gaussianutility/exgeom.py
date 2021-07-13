@@ -132,7 +132,7 @@ def exgeom(file_name, out_name):
     if oniom == 1:
         df_geom['oniom level'] = oniom_layer
         
-    no_elem = len(df_geom)
+    no_elem = str(len(df_geom))
 
     if outformat == "com":
         output = open(out_name, 'w')
