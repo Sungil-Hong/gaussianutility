@@ -10,20 +10,24 @@ from periodictable import elements
                                    'show_default': True})
 #@click.version_option(__version__)
 @click.argument('file_name', type=str) # it must include a file format
-#@click.argument('file_format', type=str, default='com') # output file format
 
-#out_name_default = file_name.rsplit(".",1)[0] + ".geom.com"
-
-#@click.argument('out_name', type=str, default=out_name_default)
+out_name_default = file_name.rsplit(".",1)[0] + ".geom.com"
+@click.argument('out_name', type=str, default=out_name_default)
 
 #def exgeom(file_name, file_format):
 def exgeom(file_name):
     """Extract the last/optimized geometry from Gaussian output file
     and generate Gaussian input fle (.com or .gjf) or xyz file.
-
+    
+    The first argument is the file name of a Gaussian output file including ".out"
+    The second argument is output file name including desired format (optional)
+    Default output name and format = input file name + "geom.com"
+    Currently ".com" and ".xyz" are supported
     """
 
-    # open file and read route section
+    outformat = out_name.rsplit(".",1)[-1]
+    
+    # open the input file and read a route section
 
     lines = open(file_name).readlines()
 
@@ -128,15 +132,24 @@ def exgeom(file_name):
 
     if oniom == 1:
         df_geom['oniom level'] = oniom_layer
+        
+    no_elem = len(df_geom)
 
-    out_name = file_name.rsplit(".",1)[0] + ".geom.com"
-    output = open(out_name, 'w')
-    output.write(routeStr + '\n\n')
-    output.write(out_name + '\n\n')
-    output.write(charAndMult + '\n')
-    output.write(df_geom.to_string(index=False, header=False))
-    output.write('\n\n')
-    output.close()
+    if outformat == "com":
+        output = open(out_name, 'w')
+        output.write(routeStr + '\n\n')
+        output.write(out_name + '\n\n')
+        output.write(charAndMult + '\n')
+        output.write(df_geom.to_string(index=False, header=False))
+        output.write('\n\n')
+        output.close()
+     elif outformat == "xyz":
+        output = open(out_name, 'w')
+        output.write(no_elem + '\n')
+        output.write(out_name + '\n')
+        output.write(df_geom.to_string(index=False, header=False))
+        output.write('\n')
+        output.close()
 
 ## Extract the final geometry from the Gaussian output file as an input file
 ## Arguments = file names you want to extract the geometry
