@@ -10,9 +10,10 @@ from periodictable import elements
                                    'show_default': True})
 #@click.version_option(__version__)
 @click.argument('file_name', type=str) # it must include a file format
-@click.argument('out_name', type=str, default="default")
+@click.option('-o','--out_file', metavar='<s>', required=False,
+             help='output file name')
 
-def xgeom(file_name, out_name):
+def xgeom(file_name, out_file):
     """Extract the last/optimized geometry from Gaussian output file
     and generate Gaussian input fle (.com or .gjf) or xyz file.
     
@@ -21,10 +22,10 @@ def xgeom(file_name, out_name):
     Default output name and format is: input file name + "geom.com"
     Currently, ".com", ".gjf", and ".xyz" are supported
     """
-    if out_name == "default":
-        out_name = file_name.rsplit(".",1)[0] + ".geom.com"
+    if not out_file:
+        out_file = file_name.rsplit(".",1)[0] + ".geom.com"
         
-    outformat = out_name.rsplit(".",1)[-1]
+    outformat = out_file.rsplit(".",1)[-1]
     
     # open the input file and read a route section
 
@@ -135,17 +136,17 @@ def xgeom(file_name, out_name):
     no_elem = str(len(df_geom))
 
     if outformat == "com" or "gjf":
-        output = open(out_name, 'w')
+        output = open(out_file, 'w')
         output.write(routeStr + '\n\n')
-        output.write(out_name + '\n\n')
+        output.write(out_file + '\n\n')
         output.write(charAndMult + '\n')
         output.write(df_geom.to_string(index=False, header=False))
         output.write('\n\n')
         output.close()
     elif outformat == "xyz":
-        output = open(out_name, 'w')
+        output = open(out_file, 'w')
         output.write(no_elem + '\n')
-        output.write(out_name + '\n')
+        output.write(out_file + '\n')
         output.write(df_geom.to_string(index=False, header=False))
         output.write('\n')
         output.close()
