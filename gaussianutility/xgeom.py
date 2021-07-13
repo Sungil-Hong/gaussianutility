@@ -5,14 +5,14 @@ import numpy as np
 from periodictable import elements
 #from canela import __version__
 
-@click.command(name='exgeom',
+@click.command(name='xgeom',
                context_settings = {'help_option_names': ['-h', '--help'],
                                    'show_default': True})
 #@click.version_option(__version__)
 @click.argument('file_name', type=str) # it must include a file format
 @click.argument('out_name', type=str, default="default")
 
-def exgeom(file_name, out_name):
+def xgeom(file_name, out_name):
     """Extract the last/optimized geometry from Gaussian output file
     and generate Gaussian input fle (.com or .gjf) or xyz file.
     
