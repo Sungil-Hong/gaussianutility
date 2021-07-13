@@ -19,7 +19,7 @@ def exgeom(file_name, out_name):
     The first argument is the file name of a Gaussian output file including ".out"
     (Optional) The second argument is an output file name including desired format
     Default output name and format is: input file name + "geom.com"
-    Currently, ".com" and ".xyz" are supported
+    Currently, ".com", ".gjf", and ".xyz" are supported
     """
     if out_name == "default":
         out_name = file_name.rsplit(".",1)[0] + ".geom.com"
@@ -134,7 +134,7 @@ def exgeom(file_name, out_name):
         
     no_elem = str(len(df_geom))
 
-    if outformat == "com":
+    if outformat == "com" or "gjf":
         output = open(out_name, 'w')
         output.write(routeStr + '\n\n')
         output.write(out_name + '\n\n')
