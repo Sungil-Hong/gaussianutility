@@ -12,8 +12,7 @@ from periodictable import elements
 @click.argument('file_name', type=str) # it must include a file format
 @click.argument('out_name', type=str, default="default")
 
-#def exgeom(file_name, file_format):
-def exgeom(file_name):
+def exgeom(file_name, out_name):
     """Extract the last/optimized geometry from Gaussian output file
     and generate Gaussian input fle (.com or .gjf) or xyz file.
     
