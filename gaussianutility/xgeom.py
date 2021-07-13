@@ -17,9 +17,12 @@ def xgeom(file_name, out_file):
     """Extract the last/optimized geometry from Gaussian output file
     and generate Gaussian input fle (.com or .gjf) or xyz file.
     
-    The argument is the file name of a Gaussian output file, including ".out"
+    The argument is the file name of a Gaussian output file, including ".out".
+    
     Default output name and format is: input file name + "geom.com".
+    
     To change, use -o option.
+    
     Currently, ".com", ".gjf", and ".xyz" formats are supported.
     """
     if not out_file:
