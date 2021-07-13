@@ -10,11 +10,11 @@ from periodictable import elements
                                    'show_default': True})
 #@click.version_option(__version__)
 @click.argument('file_name', type=str) # it must include a file format
-@click.argument('file_format', type=str, default='com') # output file format
+#@click.argument('file_format', type=str, default='com') # output file format
 
-out_name_default = file_name.rsplit(".",1)[0] + ".geom.com"
+#out_name_default = file_name.rsplit(".",1)[0] + ".geom.com"
 
-@click.argument('out_name', type=str, default=out_name_default)
+#@click.argument('out_name', type=str, default=out_name_default)
 
 def exgeom(file_name, file_format):
     """Extract the last/optimized geometry from Gaussian output file
@@ -128,8 +128,8 @@ def exgeom(file_name, file_format):
     if oniom == 1:
         df_geom['oniom level'] = oniom_layer
 
+    out_name = file_name.rsplit(".",1)[0] + ".geom.com"
     output = open(out_name, 'w')
-
     output.write(routeStr + '\n\n')
     output.write(out_name + '\n\n')
     output.write(charAndMult + '\n')
