@@ -153,7 +153,7 @@ def xgeom(file_name, out_file):
         output.write(df_geom.to_string(index=False, header=False))
         output.write('\n')
         output.close()
-    elif outformat !="com" or outformat !="gjf" or outformat !="xyz":
+    elif outformat !='com' or 'gjf' or 'xyz':
         raise TypeError('The output format must be .com, .gjf, or .xyz')
 
 ## Extract the final geometry from the Gaussian output file as an input file
