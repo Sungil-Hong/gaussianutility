@@ -10,7 +10,9 @@ from periodictable import elements
                                    'show_default': True})
 #@click.version_option(__version__)
 @click.argument('file_name', type=str) # it must include a file format
-@click.argument('out_name', type=str, default=file_name.rsplit(".",1)[0] + ".geom.com")
+file_name_input = file_name.copy()
+out_name_default = file_name_input.rsplit(".",1)[0] + ".geom.com"
+@click.argument('out_name', type=str, default=out_name_default)
 
 #def exgeom(file_name, file_format):
 def exgeom(file_name):
