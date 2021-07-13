@@ -22,7 +22,7 @@ def exgeom(file_name, out_name):
     Currently ".com" and ".xyz" are supported
     """
     if out_name == "default":
-        out_name = file_name_input.rsplit(".",1)[0] + ".geom.com"
+        out_name = file_name.rsplit(".",1)[0] + ".geom.com"
         
     outformat = out_name.rsplit(".",1)[-1]
     
