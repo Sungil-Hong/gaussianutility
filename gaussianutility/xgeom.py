@@ -1,22 +1,26 @@
+import click
 import pandas as pd
 import sys
 import numpy as np
 from periodictable import elements
+#from canela import __version__
 
-if __name__ == '__main__':
-    if '-' not in sys.argv[1:]:
-        file_list = sys.argv[1:]
-        specified = 0
-    
-    if '-' in sys.argv[1:]:
-        file_list = [sys.argv[1]]
-        specified = 1
-    
-for inFile in file_list:
-    if specified == 0:
-        output_file = inFile.rsplit(".",1)[0]+".re.com"
-    elif specified == 1:
-        output_file = sys.argv[-1]
+@click.command(name='exgeom',
+               context_settings = {'help_option_names': ['-h', '--help'],
+                                   'show_default': True})
+#@click.version_option(__version__)
+@click.argument('file_name', type=str) # it must include a file format
+@click.argument('file_format', type=str, default='com') # output file format
+
+out_name_default = file_name.rsplit(".",1)[0] + ".geom.com"
+
+@click.argument('out_name', type=str, default=out_name_default)
+
+def exgeom(file_name, file_format):
+    """Extract the last/optimized geometry from Gaussian output file
+    and generate Gaussian input fle (.com or .gjf) or xyz file.
+
+    """
 
     # open file and read route section
 
@@ -124,10 +128,10 @@ for inFile in file_list:
     if oniom == 1:
         df_geom['oniom level'] = oniom_layer
 
-    output = open(output_file, 'w')
+    output = open(out_name, 'w')
 
     output.write(routeStr + '\n\n')
-    output.write(output_file + '\n\n')
+    output.write(out_name + '\n\n')
     output.write(charAndMult + '\n')
     output.write(df_geom.to_string(index=False, header=False))
     output.write('\n\n')
