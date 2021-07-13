@@ -16,7 +16,8 @@ from periodictable import elements
 
 #@click.argument('out_name', type=str, default=out_name_default)
 
-def exgeom(file_name, file_format):
+#def exgeom(file_name, file_format):
+def exgeom(file_name):
     """Extract the last/optimized geometry from Gaussian output file
     and generate Gaussian input fle (.com or .gjf) or xyz file.
 
@@ -24,7 +25,7 @@ def exgeom(file_name, file_format):
 
     # open file and read route section
 
-    lines = open(inFile).readlines()
+    lines = open(file_name).readlines()
 
     for idx, line in enumerate(lines):
         if "#" in line:
