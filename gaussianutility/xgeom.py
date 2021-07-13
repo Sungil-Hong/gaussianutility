@@ -29,8 +29,7 @@ def xgeom(file_name, out_file):
         out_file = file_name.rsplit(".",1)[0] + ".geom.com"
         
     outformat = out_file.rsplit(".",1)[-1]
-    print(outformat)
-    if outformat !='com' or outformat !='gjf' or outformat !='xyz':
+    if outformat !='com' and outformat !='gjf' and outformat !='xyz':
         raise TypeError('The output format must be .com, .gjf, or .xyz')
         
     # open the input file and read a route section
@@ -156,17 +155,4 @@ def xgeom(file_name, out_file):
         output.write(df_geom.to_string(index=False, header=False))
         output.write('\n')
         output.close()
-    elif outformat !='com' or outformat !='gjf' or outformat !='xyz':
-        raise TypeError('The output format must be .com, .gjf, or .xyz')
-
-## Extract the final geometry from the Gaussian output file as an input file
-## Arguments = file names you want to extract the geometry
-## The default name of the extracted geometry file is "file name of output".geom.com
-## If you want to specify the file name, see the following example (valid only with a single file)
-## Examples:
-#### xgeom methane.out
-#### xgeom methane.out methanol.out ethane.out
-#### xgeom *.out
-#### xgeom methane.out - methane.geometry.com
-
 
