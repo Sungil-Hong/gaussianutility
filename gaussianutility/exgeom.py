@@ -17,9 +17,9 @@ def exgeom(file_name, out_name):
     and generate Gaussian input fle (.com or .gjf) or xyz file.
     
     The first argument is the file name of a Gaussian output file including ".out"
-    The second argument is output file name including desired format (optional)
-    Default output name and format = input file name + "geom.com"
-    Currently ".com" and ".xyz" are supported
+    (Optional) The second argument is an output file name including desired format
+    Default output name and format is: input file name + "geom.com"
+    Currently, ".com" and ".xyz" are supported
     """
     if out_name == "default":
         out_name = file_name.rsplit(".",1)[0] + ".geom.com"
@@ -149,6 +149,8 @@ def exgeom(file_name, out_name):
         output.write(df_geom.to_string(index=False, header=False))
         output.write('\n')
         output.close()
+    else:
+        raise TypeError('The output format must be .com or .xyz')
 
 ## Extract the final geometry from the Gaussian output file as an input file
 ## Arguments = file names you want to extract the geometry
