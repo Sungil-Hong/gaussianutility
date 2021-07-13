@@ -1,7 +1,9 @@
 README.md
 setup.py
 gaussianutility/__init__.py
-gaussianutility/exgeom.py
+gaussianutility/command.py
+gaussianutility/extract_geom.py
+gaussianutility/old_xgeom.py
 gaussianutility.egg-info/PKG-INFO
 gaussianutility.egg-info/SOURCES.txt
 gaussianutility.egg-info/dependency_links.txt
