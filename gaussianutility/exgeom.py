@@ -141,7 +141,7 @@ def exgeom(file_name):
         output.write(df_geom.to_string(index=False, header=False))
         output.write('\n\n')
         output.close()
-     elif outformat == "xyz":
+    elif outformat == "xyz":
         output = open(out_name, 'w')
         output.write(no_elem + '\n')
         output.write(out_name + '\n')
