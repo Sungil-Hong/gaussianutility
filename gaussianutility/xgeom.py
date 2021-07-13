@@ -17,10 +17,10 @@ def xgeom(file_name, out_file):
     """Extract the last/optimized geometry from Gaussian output file
     and generate Gaussian input fle (.com or .gjf) or xyz file.
     
-    The first argument is the file name of a Gaussian output file including ".out"
-    (Optional) The second argument is an output file name including desired format
-    Default output name and format is: input file name + "geom.com"
-    Currently, ".com", ".gjf", and ".xyz" are supported
+    The argument is the file name of a Gaussian output file, including ".out"
+    Default output name and format is: input file name + "geom.com".
+    To change, use -o option.
+    Currently, ".com", ".gjf", and ".xyz" formats are supported.
     """
     if not out_file:
         out_file = file_name.rsplit(".",1)[0] + ".geom.com"
@@ -150,7 +150,7 @@ def xgeom(file_name, out_file):
         output.write(df_geom.to_string(index=False, header=False))
         output.write('\n')
         output.close()
-    else:
+    elif outformat != "com" or "gjf" or "xyz":
         raise TypeError('The output format must be .com or .xyz')
 
 ## Extract the final geometry from the Gaussian output file as an input file
