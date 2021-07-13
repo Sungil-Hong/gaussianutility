@@ -10,7 +10,7 @@ from periodictable import elements
                                    'show_default': True})
 #@click.version_option(__version__)
 @click.argument('file_name', type=str) # it must include a file format
-@click.option('-o','--out_file', metavar='<s>', required=False,
+@click.option('-o','--out-file', metavar='<s>', required=False,
              help='output file name')
 
 def xgeom(file_name, out_file):
@@ -29,7 +29,10 @@ def xgeom(file_name, out_file):
         out_file = file_name.rsplit(".",1)[0] + ".geom.com"
         
     outformat = out_file.rsplit(".",1)[-1]
-    
+    print(outformat)
+    if outformat !='com' or outformat !='gjf' or outformat !='xyz':
+        raise TypeError('The output format must be .com, .gjf, or .xyz')
+        
     # open the input file and read a route section
 
     lines = open(file_name).readlines()
