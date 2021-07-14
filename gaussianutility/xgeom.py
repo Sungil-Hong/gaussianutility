@@ -8,7 +8,7 @@ from gaussianutility.utils import extract_geom
 @click.option('-o','--out-file', metavar='<s>', required=False,
              help='output file name')
 
-def xgeom(file_name, out_file):
+def main(file_name, out_file):
     """Extract the last/optimized geometry from Gaussian output file
     and generate Gaussian input fle (.com or .gjf) or xyz file.
     
