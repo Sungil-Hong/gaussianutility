@@ -12,8 +12,8 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     entry_points={'console_scripts': [
-                'xgeom = gaussianutility.command:xgeom',
-                'pathFeature = gaussianutility.command:pathFeature'
+                'xgeom = gaussianutility.xgeom:main',
+                'pathFeature = gaussianutility.pathFeature:main'
                 ]},
     url="https://github.com/Sungil-Hong/gaussianutility",
     packages=setuptools.find_packages(),
