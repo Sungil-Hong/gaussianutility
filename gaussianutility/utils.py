@@ -306,5 +306,7 @@ def feat_gen(file_name):
     return_var = np.append(return_var, gibbsE)
     # (# of Al, # of H, # of O, # of Si, # of water produced, path feature, connectivity feature, formation Gibbs free E)
 
-    return return_var
+    return_var_str = ', '.join(map(str,return_var))
+
+    return return_var_str
     

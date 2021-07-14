@@ -1,4 +1,5 @@
 [console_scripts]
+genFeat = gaussianutility.genFeat:main
 pathFeature = gaussianutility.pathFeature:main
 xgeom = gaussianutility.xgeom:main
 
