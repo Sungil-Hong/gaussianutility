@@ -1,6 +1,7 @@
 README.md
 setup.py
 gaussianutility/__init__.py
+gaussianutility/genFeat.py
 gaussianutility/pathFeature.py
 gaussianutility/utils.py
 gaussianutility/xgeom.py
