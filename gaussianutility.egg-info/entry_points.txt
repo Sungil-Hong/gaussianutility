@@ -1,3 +1,4 @@
 [console_scripts]
-xgeom = gaussianutility.command:xgeom
+pathFeature = gaussianutility.pathFeature:main
+xgeom = gaussianutility.xgeom:main
 

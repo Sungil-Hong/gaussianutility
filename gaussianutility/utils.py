@@ -126,7 +126,7 @@ def extract_geom(file_name, out_file = 0):
         
     no_elem = str(len(df_geom))
 
-    if outformat == "com" or "gjf":
+    if outformat == "com" or outformat == "gjf":
         output = open(out_file, 'w')
         output.write(routeStr + '\n\n')
         output.write(out_file + '\n\n')
