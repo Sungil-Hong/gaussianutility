@@ -145,13 +145,6 @@ def extract_geom(file_name, out_file = 0):
         output.write(df_geom.to_string(index=False, header=False))
         output.write('\n')
         output.close()
-        
-       
-def k_shortest_paths(G, source, target, k, weight=None):
-    return list(
-        islice(nx.shortest_simple_paths(G, source, target, weight=weight), k)
-    )
-    # Sourced from https://networkx.org/documentation/stable/index.html
 
 
 def path_feature(file_name):
@@ -164,6 +157,13 @@ def path_feature(file_name):
     
     Concept credit to Michael Cowan (mcowan92@gmail.com)
     """
+    
+    def k_shortest_paths(G, source, target, k, weight=None):
+    return list(
+        islice(nx.shortest_simple_paths(G, source, target, weight=weight), k)
+    )
+    # Sourced from https://networkx.org/documentation/stable/index.html
+    
     informat = file_name.rsplit(".",1)[-1]
     if informat == 'com' or informat == 'gjf' or informat == 'xyz':
         atoms = ase.io.read(file_name)
