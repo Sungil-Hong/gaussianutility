@@ -2,11 +2,11 @@
 
 import numpy as np
 import pandas as pd
-from periodictable import elements
 import ase.io
 import ase
 from ase import atoms
 import networkx as nx
+from periodictable import elements
 import featpro.utils as utils
 from featpro.pos import connectivity
 from itertools import islice
@@ -249,3 +249,62 @@ def path_feature(atoms):
         pathLength /= len(Al_others)
 
         return pathLength
+
+#=======================================================================
+def feat_gen(file_name):
+    
+    atoms = gen_atoms(file_name)
+    informat = file_name.rsplit(".",1)[-1]
+    return_var = np.array([file_name.rsplit(".",1)[:-1]], dtype=object)
+    
+    # Read number of atoms in the order of [Al, H, O, Si]
+    atomSymbols = np.array(atoms.get_chemical_symbols())
+    atomList = np.unique(atomSymbols, return_counts=True)
+    
+    if 'Al' not in atomList[0]:
+        atomCount = np.concatenate(([0],atomList[1]))
+    else:
+        atomCount = atomList[1]
+
+    # Number of produced water produced by condensation of monomers
+    # This feature is intended to distinguish structue types
+    no_water = (atomCount[0] + atomCount[-1])*4 - atomCount[-2]
+
+    return_var = np.append(return_var, atomCount)
+    return_var = np.append(return_var, no_water)
+    # (# of Al, # of H, # of O, # of Si, # of water produced)
+    
+    # Path feature
+    pathval = path_feature(atoms)
+    return_var = np.append(return_var, pathval)
+    # (# of Al, # of H, # of O, # of Si, # of water produced, path feature)
+    
+    # Connectivity feature
+    connectval = connectivity(atoms)
+    return_var = np.append(return_var, connectval)
+    # (# of Al, # of H, # of O, # of Si, # of water produced, path feature, connectivity feature)
+    
+    if informat == 'out':
+        # Set target = formation energy
+        # Read the Gibbs free energy from the Gaussian output file
+            
+        G_Si = -592.968165   # G of Si(OH)4 in hartree @ 100'C
+        G_Al = -546.445      # G of Al(OH)3(H2O) in hartree @ 100'C
+        G_water = -76.421375 # G of water in hartree @ 100'C
+        
+        lines = open(file_name,'r')
+        for line in lines:
+            if "Sum of electronic and thermal Free Energies" in line:
+                gibbsE = float(line.split()[-1])
+
+        # Normalize with the number of monomers and convert the unit from hartree to kJ/mol
+        gibbsE -= G_Al*atomCount[0] + G_Si*atomCount[-1] - G_water*no_water
+        gibbsE /= (atomCount[0] + atomCount[-1])/2625.4996394799 
+        
+    else: gibbsE = 'N/A'
+
+    return_var = np.append(return_var, gibbsE)
+    # (# of Al, # of H, # of O, # of Si, # of water produced, path feature, connectivity feature, formation Gibbs free E)
+
+    return return_var
+    
