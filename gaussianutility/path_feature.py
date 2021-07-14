@@ -1,7 +1,6 @@
 #! usr/bin/env/python
 
-# Path feature
-
+import numpy as np
 from ase import Atoms
 import networkx as nx
 import featpro.utils as utils
@@ -20,6 +19,7 @@ def pathFeature(atoms):
     More weight is given to the shorter path.
     Args:
     atoms: ase.Atoms object
+    Concept credit to Michael Cowan mcowan92@gmail.com
     """
     atomSymbols = np.array(atoms.get_chemical_symbols())
     atomList = np.unique(atomSymbols, return_counts=True)
