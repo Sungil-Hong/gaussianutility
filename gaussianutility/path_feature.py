@@ -1,11 +1,9 @@
 #! usr/bin/env/python
 
 # Path feature
-#!pip3 install nerworkx
-#!pip3 install git+https://github.com/mpourmpakis/featpro.git
 
+from ase import Atoms
 import networkx as nx
-import featpro
 import featpro.utils as utils
 from itertools import islice
 
@@ -17,11 +15,11 @@ def k_shortest_paths(G, source, target, k, weight=None):
 
 def pathFeature(atoms):
     """
-    Calculate a path feature, which is defined as a weighted average of two shortest paths of every Al-Al pair
-    This feature captures the different positioning or distribution of Al in structures
-    More weight is given to the short path
-    Arg:
-    atoms (ase.Atoms): atoms object
+    Calculate a path feature, which is defined as a weighted average of two shortest paths of every Al-Al pair.
+    This feature captures the different positioning or distribution of Al in structures.
+    More weight is given to the shorter path.
+    Args:
+    atoms: ase.Atoms object
     """
     atomSymbols = np.array(atoms.get_chemical_symbols())
     atomList = np.unique(atomSymbols, return_counts=True)
@@ -45,7 +43,6 @@ def pathFeature(atoms):
         pathLength = 0
         for Al_target in Al_others:
             paths = k_shortest_paths(G, Al_first, Al_target, 2)
-            #print(paths)
             pathLength += (len(paths[0])-1)**1.5 + (len(paths[1])-1)
 
         pathLength /= len(Al_others)
