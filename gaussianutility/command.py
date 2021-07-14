@@ -1,8 +1,12 @@
 import click
 from gaussianutility.extract_geom import extract_geom
+from gaussianutility.path_feature import path_feature
 #from canela import __version__
 
-@click.command(name='xgeom',
+@click.command(name = 'xgeom',
+               context_settings = {'help_option_names': ['-h', '--help'],
+                                   'show_default': True})
+@click.command(name = 'pathFeature',
                context_settings = {'help_option_names': ['-h', '--help'],
                                    'show_default': True})
 #@click.version_option(__version__)
@@ -27,3 +31,12 @@ def xgeom(file_name, out_file):
         
     extract_geom(file_name, out_file)
 
+def pathFeature(file_name):
+    """Print a path feature of the given structure.
+    The file format must be ".com", ".gjf", ".xyz", or ".out".
+    """
+    path_feature(file_name)
+    
+    
+    
+    
