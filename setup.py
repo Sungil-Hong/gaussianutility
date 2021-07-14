@@ -11,8 +11,10 @@ setuptools.setup(
     description="Useful utilities to use Gaussian09 software",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    entry_points={'console_scripts': ['xgeom = gaussianutility.command:xgeom']
-                 ['pathFeature = gaussinutility.command:pathFeature']},
+    entry_points={'console_scripts': [
+                'xgeom = gaussianutility.command:xgeom',
+                'pathFeature = gaussinutility.command:pathFeature'
+                ]},
     url="https://github.com/Sungil-Hong/gaussianutility",
     packages=setuptools.find_packages(),
     classifiers=[
