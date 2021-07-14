@@ -13,7 +13,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     entry_points={'console_scripts': [
                 'xgeom = gaussianutility.command:xgeom',
-                'pathFeature = gaussinutility.command:pathFeature'
+                'pathFeature = gaussianutility.command:pathFeature'
                 ]},
     url="https://github.com/Sungil-Hong/gaussianutility",
     packages=setuptools.find_packages(),
