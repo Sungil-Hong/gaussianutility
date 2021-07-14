@@ -10,7 +10,11 @@ import featpro.utils as utils
 from itertools import islice
 
 def extract_geom(file_name, out_file = 0):
-    
+
+    informat = file_name.rsplit(".",1)[-1]
+    if informat != 'out':
+	raise TypeError('The input file format must be .out')
+
     if not out_file:
         out_file = file_name.rsplit(".",1)[0] + ".geom.com"
         
