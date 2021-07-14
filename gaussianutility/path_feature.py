@@ -1,26 +1,33 @@
 #! usr/bin/env/python
 
 import numpy as np
-from ase import Atoms
+import ase.io
 import networkx as nx
 import featpro.utils as utils
 from itertools import islice
 
-# Sourced from https://networkx.org/documentation/stable/index.html
 def k_shortest_paths(G, source, target, k, weight=None):
     return list(
         islice(nx.shortest_simple_paths(G, source, target, weight=weight), k)
     )
+    # Sourced from https://networkx.org/documentation/stable/index.html
 
-def pathFeature(atoms):
+def path_feature(file_name):
     """
     Calculate a path feature, which is defined as a weighted average of two shortest paths of every Al-Al pair.
     This feature captures the different positioning or distribution of Al in structures.
     More weight is given to the shorter path.
-    Args:
-    atoms: ase.Atoms object
-    Concept credit to Michael Cowan mcowan92@gmail.com
+    
+    The input file format must be one among ".com", ".gjf", ".xyz", and ".out" (Gaussian output fule).
+    
+    Concept credit to Michael Cowan (mcowan92@gmail.com)
     """
+    informat = file_name.rsplit(".",1)[-1]
+    if informat == 'com' or informat == 'gjf' or informat == 'xyz':
+        atoms = ase.io.read(file_name)
+    elif informat == 'out':
+        atoms = ase.io.read(file_name, format = 'gaussian-out', index=-1)
+        
     atomSymbols = np.array(atoms.get_chemical_symbols())
     atomList = np.unique(atomSymbols, return_counts=True)
     
