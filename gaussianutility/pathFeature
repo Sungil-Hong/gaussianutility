@@ -8,7 +8,7 @@ from gaussianutility.utils import path_feature
 #@click.version_option(__version__)
 @click.argument('file_name', type=str) # it must include a file format
 
-def pathFeature(file_name):
+def main(file_name):
     """
     Calculate a path feature, which is defined as a weighted average of two shortest paths of every Al-Al pair.
     This feature captures the different positioning or distribution of Al in structures.
