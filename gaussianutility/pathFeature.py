@@ -18,5 +18,5 @@ def main(file_name):
     
     Concept credit to Michael Cowan (mcowan92@gmail.com)
     """
-    path_feature(file_name)
+    print(path_feature(file_name))
     
