@@ -252,7 +252,15 @@ def path_feature(atoms):
 
 #=======================================================================
 def feat_gen(file_name):
+    """Print features and target for ML aplication in the order of
+    {# of Al, # of H, # of O, # of Si, # of water produced, path feature, connectivity feature,
+    formation Gibbs free E}
+    from Gaussian output file (.out).
     
+    If Gaussian input (.com or .gjf) or XYZ file is used, the Gibbs free energy will be missing.
+    If the structure does not contain more than 1 Al, path feature returns N/A.
+    """
+
     atoms = gen_atoms(file_name)
     informat = file_name.rsplit(".",1)[-1]
     return_var = np.array([file_name.rsplit(".",1)[:-1]], dtype=object)
@@ -270,19 +278,16 @@ def feat_gen(file_name):
     # This feature is intended to distinguish structue types
     no_water = (atomCount[0] + atomCount[-1])*4 - atomCount[-2]
 
-    return_var = np.append(return_var, atomCount)
-    return_var = np.append(return_var, no_water)
-    # (# of Al, # of H, # of O, # of Si, # of water produced)
+    return_var = np.append(return_var, atomCount) # # of atoms
+    return_var = np.append(return_var, no_water)  # # of produced water from condensation
     
     # Path feature
     pathval = path_feature(atoms)
-    return_var = np.append(return_var, pathval)
-    # (# of Al, # of H, # of O, # of Si, # of water produced, path feature)
+    return_var = np.append(return_var, pathval) # path feature
     
     # Connectivity feature
     connectval = connectivity(atoms)
-    return_var = np.append(return_var, connectval)
-    # (# of Al, # of H, # of O, # of Si, # of water produced, path feature, connectivity feature)
+    return_var = np.append(return_var, connectval) # connectivity feature
     
     if informat == 'out':
         # Set target = formation energy
@@ -303,9 +308,7 @@ def feat_gen(file_name):
         
     else: gibbsE = 'N/A'
 
-    return_var = np.append(return_var, gibbsE)
-    # (# of Al, # of H, # of O, # of Si, # of water produced, path feature, connectivity feature, formation Gibbs free E)
-
+    return_var = np.append(return_var, gibbsE) # formation Gibbs free E
     return_var_str = ', '.join(map(str,return_var))
 
     return return_var_str
