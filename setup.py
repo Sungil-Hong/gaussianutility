@@ -14,7 +14,8 @@ setuptools.setup(
     entry_points={'console_scripts': [
                 'xgeom = gaussianutility.xgeom:main',
                 'pathFeature = gaussianutility.pathFeature:main',
-                'genFeat = gaussianutility.genFeat:main'
+                'genFeat = gaussianutility.genFeat:main',
+                'freezeLow = gaussianutility.freezeLow:main'
                 ]},
     url="https://github.com/Sungil-Hong/gaussianutility",
     packages=setuptools.find_packages(),
