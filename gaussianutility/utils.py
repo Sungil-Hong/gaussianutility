@@ -313,3 +313,65 @@ def feat_gen(file_name):
 
     return return_var_str
     
+#=======================================================================
+def freeze_low(file_name):
+    """Freeze Cartesian coordinates of atoms in the low ONIOM layer.
+    Only .com and .gjf file is supported.
+    """
+    informat = file_name.rsplit(".",1)[-1]
+    if not informat == 'com' or informat == 'gjf':
+        raise TypeError('The input file format must be Gaussian input (com or gjf)')
+        
+    lines = open(file_name).readlines()
+
+    for idx, line in enumerate(lines):
+        if "#" in line:
+            if not ("oniom" or "ONIOM" or "Oniom") in str(line):
+                raise AttributeError("Must have ONIOM formulation")
+            break
+
+    iniGeom = []
+
+    for line in lines[idx+5:]:
+        if len(line) <= 2: break
+        iniGeom.append(line.split())
+
+    iniGeom = list(filter(None, iniGeom))
+
+    shape_index = 0
+    length = len(iniGeom[0])
+    for i in iniGeom:
+        if len(i) != length:
+            shape_index += 1
+            break
+
+    if shape_index == 0:
+        df_iniGeom = pd.DataFrame(iniGeom, columns = ['element','X','Y','Z','oniom level'])
+    else:
+        df_iniGeom = pd.DataFrame(iniGeom, columns = ['element','atomic type','X','Y','Z','oniom level','val1','val2'])
+
+    oniom_layer = pd.DataFrame(df_iniGeom, columns = ['oniom level'])
+    Low_level = np.array(oniom_layer.index[oniom_layer['oniom level']=='L'])+1
+
+    cond = 1
+    while cond:
+        if len(lines[-1]) > 2:
+            lines.append['\n']
+            cond=0
+        if len(lines[-1]) == len(lines[-2]):
+            del lines[-1]
+        else: cond=0
+
+    for elem in Low_level:
+        lines.append('X ' + str(elem) + ' F\n')
+
+    lines.append('\n')
+
+    editfile = open(file_name, 'w')
+
+    for line in lines:
+        editfile.write(line)
+
+    editfile.close()
+
+    
