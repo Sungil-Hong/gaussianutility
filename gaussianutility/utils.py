@@ -66,36 +66,34 @@ def extract_geom(file_name, out_file = 0):
         charAndMult = "{} {}".format(charge, multiplicity)
 
     if oniom == 1:
-        chargeL, multiplicityL = lines[idx_charge].split()[2], lines[idx_charge].split()[5]
-        chargeM, multiplicityM = lines[idx_charge+1].split()[2], lines[idx_charge+1].split()[5]
-        chargeH, multiplicityH = lines[idx_charge+2].split()[2], lines[idx_charge+2].split()[5]
 
-        charAndMult = "{} {} {} {} {} {}".format(chargeL, multiplicityL, chargeM, multiplicityM, chargeH, multiplicityH)    
+        for idx, line in enumerate(lines[idx_charge:]):
+            if not "Charge" in line:
+                idx_charge_end = idx_charge+idx
+                break
 
-    # Read oniom layer data
+        charAndMult = []
 
-    iniGeom = []
+        for line in lines[idx_charge: idx_charge_end]:
+                charAndMult.append(str(line.split()[2]))
+                charAndMult.append(str(line.split()[5]))
+
+        charAndMult = " ".join(charAndMult)
+
+   # Read oniom layer data
 
     if oniom == 1:
-        for line in lines[idx_charge+3:]:
-            if len(line) <= 3 : break
+
+        iniGeom = []
+        for line in lines[idx_charge_end:]:
+            if len(line) <= 2: break
             iniGeom.append(line.split())
 
         iniGeom = list(filter(None, iniGeom))
-         
-        shape_index = 0
-        length = len(iniGeom[0])
-        for i in iniGeom:
-            if len(i) != length:
-                shape_index += 1
-                break
-    
-        if shape_index == 0:
-            df_iniGeom = pd.DataFrame(iniGeom, columns = ['element','X','Y','Z','oniom level'])
-        else:
-            df_iniGeom = pd.DataFrame(iniGeom, columns = ['element','atomic type','X','Y','Z','oniom level','connected atom','level of connected atom','val1','val2'])
-    
-        oniom_layer = pd.DataFrame(df_iniGeom, columns = ['oniom level'])
+
+        oniom_layer = []
+        for line in iniGeom:
+            oniom_layer.append(line[5])
 
     # Read final geometry, convert format, and write a new file
 
