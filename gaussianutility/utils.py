@@ -370,7 +370,7 @@ def freeze_low(file_name):
     Low_level = np.array(oniom_layer.index[oniom_layer['ONIOM layer']=='L'])+1
 
     if connect == 0:
-        editfile = open(infile, 'w')
+        editfile = open(file_name, 'w')
         for line in lines[:geomEndIdx]:
             editfile.write(line)
         editfile.write('\n')
@@ -385,7 +385,7 @@ def freeze_low(file_name):
                 connectEndIdx = geomEndIdx+idx+1
                 break
 
-        editfile = open(infile, 'w')
+        editfile = open(file_name, 'w')
         for line in lines[:connectEndIdx+1]:
             editfile.write(line)
         for elem in Low_level:
