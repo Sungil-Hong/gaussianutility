@@ -324,52 +324,75 @@ def freeze_low(file_name):
 
     for idx, line in enumerate(lines):
         if "#" in line:
-            if not ("oniom" or "ONIOM" or "Oniom") in str(line):
-                raise AttributeError("Must have ONIOM formulation")
+            idx_route = idx
+            route = line
             break
 
-    iniGeom = []
+    if len(lines[idx_route+1]) >=2:
+        route = route.replace('\n', ' ')
+        route += lines[idx_route+1]
+        idx_route += 1
 
-    for line in lines[idx+5:]:
+    if not ("oniom" or "ONIOM" or "Oniom") in route:
+        raise AttributeError("Must have ONIOM formulation")
+
+    if not "modredundant" in route:
+        lines[idx_route] = lines[idx_route].replace('opt', 'opt=modredundant')
+
+    connect = 0
+    if "geom=connectivity" in route:
+        connect += 1
+
+    geom = []
+
+    for idx2, line in enumerate(lines[idx_route+5:]):
+        geom.append(line.split())
+        geomEndIdx = idx_route+idx2+5
         if len(line) <= 2: break
-        iniGeom.append(line.split())
 
-    iniGeom = list(filter(None, iniGeom))
+    # if connect == 1:
+    #     for id3, line in enumerate(lines[])
+    geom = list(filter(None, geom))
 
-    shape_index = 0
-    length = len(iniGeom[0])
-    for i in iniGeom:
-        if len(i) != length:
-            shape_index += 1
-            break
+    lineLen = 0
+    for line in geom:
+        if len(line) > lineLen: lineLen = len(line)
 
-    if shape_index == 0:
-        df_iniGeom = pd.DataFrame(iniGeom, columns = ['element','X','Y','Z','oniom level'])
-    else:
-        df_iniGeom = pd.DataFrame(iniGeom, columns = ['element','atomic type','X','Y','Z','oniom level','val1','val2'])
+    clmnName = []
+    for i in range(lineLen):
+        name = "Column {}".format(i)
+        clmnName.append(name)
 
-    oniom_layer = pd.DataFrame(df_iniGeom, columns = ['oniom level'])
-    Low_level = np.array(oniom_layer.index[oniom_layer['oniom level']=='L'])+1
+    clmnName[5] = 'ONIOM layer'
+    df_geom = pd.DataFrame(geom, columns= clmnName)
+    oniom_layer = pd.DataFrame(df_geom, columns = ['ONIOM layer'])
 
-    cond = 1
-    while cond:
-        if len(lines[-1]) > 2:
-            lines.append['\n']
-            cond=0
-        if len(lines[-1]) == len(lines[-2]):
-            del lines[-1]
-        else: cond=0
+    Low_level = np.array(oniom_layer.index[oniom_layer['ONIOM layer']=='L'])+1
 
-    for elem in Low_level:
-        lines.append('X ' + str(elem) + ' F\n')
+    if connect == 0:
+        editfile = open(infile, 'w')
+        for line in lines[:geomEndIdx]:
+            editfile.write(line)
+        editfile.write('\n')
+        for elem in Low_level:
+            editfile.write('X ' + str(elem) + ' F\n')
+        editfile.write('\n')
+        editfile.close()
 
-    lines.append('\n')
+    if connect == 1:
+        for idx, line in enumerate(lines[geomEndIdx+1:]):
+            if len(line) <= 2:
+                connectEndIdx = geomEndIdx+idx+1
+                break
 
-    editfile = open(file_name, 'w')
+        editfile = open(infile, 'w')
+        for line in lines[:connectEndIdx+1]:
+            editfile.write(line)
+        for elem in Low_level:
+            editfile.write('X ' + str(elem) + ' F\n')
+        editfile.write('\n')
+        editfile.close()
 
-    for line in lines:
-        editfile.write(line)
 
-    editfile.close()
 
-    
+
