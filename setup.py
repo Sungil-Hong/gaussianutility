@@ -15,7 +15,7 @@ setuptools.setup(
                 'xgeom = gaussianutility.xgeom:main',
                 'pathFeature = gaussianutility.pathFeature:main',
                 'genFeat = gaussianutility.genFeat:main',
-                'freezeLow = gaussianutility.freezeLow:main'
+                'freezeLow = gaussianutility.freezeLow:main',
                 'oniomSort = gaussianutility.oniomSort:main'
                 ]},
     url="https://github.com/Sungil-Hong/gaussianutility",
