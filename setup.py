@@ -16,7 +16,7 @@ setuptools.setup(
                 'pathFeature = gaussianutility.pathFeature:main',
                 'genFeat = gaussianutility.genFeat:main',
                 'freezeLow = gaussianutility.freezeLow:main'
-                'oniomOrder = gaussianutility.oniomOrder:main'
+                'oniomSort = gaussianutility.oniomSort:main'
                 ]},
     url="https://github.com/Sungil-Hong/gaussianutility",
     packages=setuptools.find_packages(),
