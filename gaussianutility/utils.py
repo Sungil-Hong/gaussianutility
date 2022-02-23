@@ -395,4 +395,94 @@ def freeze_low(file_name):
 
 
 
+#=======================================================================
+def ONIOM_sort(file_name, sort_idx = 0):
+    """Sort ONIOM input file by the layer, from high to low.
+    Additional index can be 'x', 'y', 'z' (by coordinate, ascending order)
+    or 'Atom' (by atomic number, descending order)
+    Sorting by 'Atom' is defualt
+    """
+    
+    if not 'sort_idx':
+    sort_idx = 'Atom'
+    
+    inputfile = open(file_name,'r')
 
+    for index, line in enumerate(inputfile):
+        if line.startswith("#"):
+            routeBegin = index
+        if len(line) > 2 and line[0].isdigit() * (line[1]==' ') * line[2].isdigit():
+            geomBegin = index+1
+            break
+
+    for index, line in enumerate(inputfile, geomBegin):
+        if len(line) < 3:
+            geomEnd = index-1
+            break
+
+    route=[]
+    rawGeom=[]
+    rest=[]
+
+    for index, line in enumerate(inputfile):
+        if index >= routeBegin and index < geomBegin:
+            route.append(line)
+        if index >= geomBegin and index <= geomEnd:
+            rawGeom.append(line.split())
+        if index > geomEnd+3:
+            rest.append(line)
+
+    oniomtest = 0
+    for elem in route:
+        if ('oniom' or 'Oniom' or 'ONIOM') in elem:
+            oniomtest += 1
+
+        if ('geom=connectivity') in elem:
+            elem.replace('geom=connectivity','')
+
+    if oniomtest == 0: raise ValueError("Need to be ONIOM file")
+    
+    
+    lineLen = 0
+    for line in rawGeom:
+        if len(line) > lineLen: lineLen = len(line)
+
+    if lineLen == 5:
+        df_geom = pd.DataFrame(rawGeom, columns = ['Atom','x','y','z','ONIOM_layer'])
+    elif lineLen > 5:
+        clmnName = []
+        for i in range(lineLen):
+            name = "C{}".format(i)
+            clmnName.append(name)
+
+        df_geom = pd.DataFrame(rawGeom, columns = clmnName)
+        df_geom = df_geom.iloc[ : ,0:6]
+        df_geom = df_geom.rename({'C0':'Atom', 'C1':'Index', 'C2':'x', 'C3':'y', 'C4':'z', 'C5':'ONIOM_layer'}, axis='columns')
+
+    df_layer_sort = pd.DataFrame({'ONIOM_layer': ['H','M','L']})
+    layer_sort_mapping = df_layer_sort.reset_index().set_index('ONIOM_layer')
+
+    df_geom['ONIOM_layer_num'] = df_geom['ONIOM_layer'].map(layer_sort_mapping['index'])
+
+    if sort_idx == 'Atom':
+        elem = []
+        for el in elements:
+            elem.append(el.symbol)
+
+        df_atom_sort = pd.DataFrame(elem[1:], columns = ['symbol'])
+        atom_sort_mapping = df_atom_sort.reset_index().set_index('symbol')
+
+        df_geom['Atomic_num'] = df_geom['Atom'].map(atom_sort_mapping['index'])
+        df_geom = df_geom.sort_values(by=['ONIOM_layer_num', 'Atomic_num'], ascending = [1,0])
+        df_geom = df_geom.drop(columns=['ONIOM_layer_num', 'Atomic_num'])
+    else:
+        df_geom = df_geom.sort_values(by=['ONIOM_layer_num', sort_idx])
+        df_geom = df_geom.drop(columns=['ONIOM_layer_num'])
+
+    outfile = open('test_out.com', 'w')
+    routeStr = ""
+    routeStr = routeStr.join(route)
+    outfile.write(routeStr)
+    outfile.write(df_geom.to_string(index=False, header=False))
+    outfile.write('\n\n')
+    outfile.close()
