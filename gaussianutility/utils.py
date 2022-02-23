@@ -397,14 +397,6 @@ def freeze_low(file_name):
 
 #=======================================================================
 def ONIOM_sort(file_name, sort_idx = 0):
-    """Sort ONIOM input file by the layer, from high to low.
-    Additional index can be 'x', 'y', 'z' (by coordinate, ascending order)
-    or 'Atom' (by atomic number, descending order)
-    Sorting by 'Atom' is defualt
-    """
-    
-    if not 'sort_idx':
-    sort_idx = 'Atom'
     
     inputfile = open(file_name,'r')
 
@@ -442,7 +434,6 @@ def ONIOM_sort(file_name, sort_idx = 0):
 
     if oniomtest == 0: raise ValueError("Need to be ONIOM file")
     
-    
     lineLen = 0
     for line in rawGeom:
         if len(line) > lineLen: lineLen = len(line)
@@ -479,7 +470,7 @@ def ONIOM_sort(file_name, sort_idx = 0):
         df_geom = df_geom.sort_values(by=['ONIOM_layer_num', sort_idx])
         df_geom = df_geom.drop(columns=['ONIOM_layer_num'])
 
-    outfile = open('test_out.com', 'w')
+    outfile = open(file_name, 'w')
     routeStr = ""
     routeStr = routeStr.join(route)
     outfile.write(routeStr)
