@@ -434,7 +434,9 @@ def ONIOM_sort(file_name, sort_idx = 0):
         geom.append(line.split())
         geomEndIdx = idx_route+idx2+5
         if len(line) <= 2: break
-     
+            
+    geom = list(filter(None, geom))
+    
     lineLen = 0
     for line in geom:
         if len(line) > lineLen: lineLen = len(line)
