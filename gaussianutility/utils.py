@@ -399,6 +399,11 @@ def freeze_low(file_name):
 def ONIOM_sort(file_name, sort_idx = 0):
     
     inputfile = open(file_name,'r')
+    
+    if not sort_idx:
+        sort_idx = 'Atom'
+    if sort_idx!='Atom' and sort_idx!='x' and sort_idx!='y', and sort_idx!='z':
+        raise ValueError(" Sort index must be \'x\', \'y\', \'z\', or \'Atom\' ")
 
     for index, line in enumerate(inputfile):
         if line.startswith("#"):
