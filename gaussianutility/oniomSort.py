@@ -5,6 +5,7 @@ from gaussianutility.utils import ONIOM_sort
                context_settings = {'help_option_names': ['-h', '--help'],
                                    'show_default': True})
 @click.argument('file_name', type=str) # it must include a file format
+@click.option('-s', '--sort-idx', metavar='<s>', required=False, help='index for sorting')
 
 def main(file_name, sort_idx):
     """Sort ONIOM input file by the layer, from high to low.
@@ -12,8 +13,5 @@ def main(file_name, sort_idx):
     or 'Atom' (by atomic number, descending order)
     Sorting by 'Atom' is defualt
     """
-    
-    if not sort_idx:
-        sort_idx = 'Atom'
         
     ONIOM_sort(file_name, sort_idx)
