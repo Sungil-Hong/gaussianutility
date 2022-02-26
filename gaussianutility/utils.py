@@ -371,16 +371,15 @@ def ONIOM_sort(file_name, sort_idx = 0):
     if not sort_idx:
         sort_idx = 'Atom'
     if not sort_idx in ['Atom','x','y','z']:
-        raise ValueError(" Sort index must be \'x\', \'y\', \'z\', or \'Atom\' ")
-
-    if not ("oniom" or "ONIOM" or "Oniom") in route:
-        raise AttributeError("Must have ONIOM formulation")        
+        raise ValueError(" Sort index must be \'x\', \'y\', \'z\', or \'Atom\' ")  
         
     informat, route, title_and_spin, df_geom = read_input(file_name)
     
     if not informat == 'com' or informat == 'gjf':
         raise TypeError('The input file format must be Gaussian input (com or gjf)') 
         
+    if not ("oniom" or "ONIOM" or "Oniom") in route:
+        raise AttributeError("Must have ONIOM formulation")      
     if "geom=connectivity" in route:
         route = route.replace("geom=connectivity","")
     
