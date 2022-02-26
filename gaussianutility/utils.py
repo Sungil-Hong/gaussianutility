@@ -310,7 +310,61 @@ def feat_gen(file_name):
     return_var_str = ', '.join(map(str,return_var))
 
     return return_var_str
+
+#=======================================================================
+def read_input(file_name):
+    """Return input file format, route section, title (including spin/multiplicity), and geometry.
+    'route' and 'title_and_spin' are string.
+    If input is in ONIOM format, geom is pandas dataframe; otherwise, list
+    """
+    informat = file_name.rsplit(".",1)[-1]
+
+    inputfile = open(file_name,'r')
+    lines = open(file_name).readlines()
+    for idx, line in enumerate(lines):
+        if "#" in line:
+            idx_route = idx
+            route = line
+            break
+
+    if len(lines[idx_route+1]) >=2:
+        route = route.replace('\n', ' ')
+        route += lines[idx_route+1]
+        idx_route += 1
+
+    title_and_spin = lines[idx_route+2:idx_route+5]
+
+    geom=[]
+    for idx2, line in enumerate(lines[idx_route+5:]):
+        geom.append(line.split())
+        geomEndIdx = idx_route+idx2+5
+        if len(line) <= 2: break
+    geom = list(filter(None, geom))
     
+    if ("oniom" or "ONIOM" or "Oniom") in route: 
+        lineLen = 0
+        for line in geom:
+            if len(line) > lineLen: lineLen = len(line)
+
+        if lineLen == 5:
+            df_geom = pd.DataFrame(geom, columns = ['Atom','x','y','z','ONIOM_layer'])
+        elif lineLen > 5:
+            clmnName = []
+            for i in range(lineLen):
+                name = "C{}".format(i)
+                clmnName.append(name)
+
+            df_geom = pd.DataFrame(geom, columns = clmnName)
+            df_geom = df_geom.iloc[ : ,0:6]
+            df_geom = df_geom.rename({'C0':'Atom', 'C1':'Index', 'C2':'x', 'C3':'y', 'C4':'z', 'C5':'ONIOM_layer'}, axis='columns')
+
+
+        return informat, route, title_and_spin, df_geom
+    
+    else:
+        return informat, route, title_and_spin, geom
+
+
 #=======================================================================
 def freeze_low(file_name):
     """Freeze Cartesian coordinates of atoms in the low ONIOM layer.
