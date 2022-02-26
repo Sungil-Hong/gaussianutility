@@ -452,64 +452,24 @@ def freeze_low(file_name):
 #=======================================================================
 def ONIOM_sort(file_name, sort_idx = 0):
     
-    informat = file_name.rsplit(".",1)[-1]
-    if not informat == 'com' or informat == 'gjf':
-        raise TypeError('The input file format must be Gaussian input (com or gjf)')
- 
-    inputfile = open(file_name,'r')
-    
     if not sort_idx:
         sort_idx = 'Atom'
     if not sort_idx in ['Atom','x','y','z']:
         raise ValueError(" Sort index must be \'x\', \'y\', \'z\', or \'Atom\' ")
 
-    lines = open(file_name).readlines()
-    for idx, line in enumerate(lines):
-        if "#" in line:
-            idx_route = idx
-            route = line
-            break
-            
-    if len(lines[idx_route+1]) >=2:
-        route = route.replace('\n', ' ')
-        route += lines[idx_route+1]
-        idx_route += 1
-        
-    title_and_spin = lines[idx_route+2:idx_route+5]
-
     if not ("oniom" or "ONIOM" or "Oniom") in route:
         raise AttributeError("Must have ONIOM formulation")        
+        
+    informat, route, title_and_spin, df_geom = read_input(file_name)
+    
+    if not informat == 'com' or informat == 'gjf':
+        raise TypeError('The input file format must be Gaussian input (com or gjf)') 
         
     if "geom=connectivity" in route:
         route = route.replace("geom=connectivity","")
     
-    geom=[]
-    for idx2, line in enumerate(lines[idx_route+5:]):
-        geom.append(line.split())
-        geomEndIdx = idx_route+idx2+5
-        if len(line) <= 2: break
-            
-    geom = list(filter(None, geom))
-    
-    lineLen = 0
-    for line in geom:
-        if len(line) > lineLen: lineLen = len(line)
-
-    if lineLen == 5:
-        df_geom = pd.DataFrame(geom, columns = ['Atom','x','y','z','ONIOM_layer'])
-    elif lineLen > 5:
-        clmnName = []
-        for i in range(lineLen):
-            name = "C{}".format(i)
-            clmnName.append(name)
-
-        df_geom = pd.DataFrame(geom, columns = clmnName)
-        df_geom = df_geom.iloc[ : ,0:6]
-        df_geom = df_geom.rename({'C0':'Atom', 'C1':'Index', 'C2':'x', 'C3':'y', 'C4':'z', 'C5':'ONIOM_layer'}, axis='columns')
-
     df_layer_sort = pd.DataFrame({'ONIOM_layer': ['H','M','L']})
     layer_sort_mapping = df_layer_sort.reset_index().set_index('ONIOM_layer')
-
     df_geom['ONIOM_layer_num'] = df_geom['ONIOM_layer'].map(layer_sort_mapping['index'])
 
     if sort_idx == 'Atom':
@@ -519,8 +479,8 @@ def ONIOM_sort(file_name, sort_idx = 0):
 
         df_atom_sort = pd.DataFrame(elem[1:], columns = ['symbol'])
         atom_sort_mapping = df_atom_sort.reset_index().set_index('symbol')
-
         df_geom['Atomic_num'] = df_geom['Atom'].map(atom_sort_mapping['index'])
+        
         df_geom = df_geom.sort_values(by=['ONIOM_layer_num', 'Atomic_num'], ascending = [1,0])
         df_geom = df_geom.drop(columns=['ONIOM_layer_num', 'Atomic_num'])
     else:
