@@ -403,8 +403,8 @@ def ONIOM_sort(file_name, sort_idx = 0, freeze_idx = 0):
         df_geom = df_geom.drop(columns=['ONIOM_layer_num'])
     
     df_geom['Index'] = 0
-    if freezeIdx:
-        for idx in freezeIdx:
+    if freeze_idx:
+        for idx in freeze_idx:
             df_geom.loc[df_geom['ONIOM_layer'] == idx, 'Index'] = -1
 
     outfile = open(file_name, 'w')
