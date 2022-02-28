@@ -6,7 +6,7 @@ from gaussianutility.utils import ONIOM_sort
                                    'show_default': True})
 @click.argument('file_name', type=str) # it must include a file format
 @click.option('-s', '--sort-idx', metavar='<s>', required=False, help='index for sorting')
-@click.option('-s', '--freeze-idx', matevar='<s>', required=False, help='index for freezing atom position for geometry optimization')
+@click.option('-s', '--freeze-idx', metavar='<s>', required=False, help='index for freezing atom position for geometry optimization')
 
 def main(file_name, sort_idx, freeze_idx):
     """Sort ONIOM input file by the layer, from high to low.
