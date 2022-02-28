@@ -366,7 +366,7 @@ def read_input(file_name):
 
 
 #=======================================================================
-def ONIOM_sort(file_name, sort_idx = 0):
+def ONIOM_sort(file_name, sort_idx = 0, freeze_idx = 0):
     
     if not sort_idx:
         sort_idx = 'Atom'
@@ -401,6 +401,11 @@ def ONIOM_sort(file_name, sort_idx = 0):
     else:
         df_geom = df_geom.sort_values(by=['ONIOM_layer_num', sort_idx])
         df_geom = df_geom.drop(columns=['ONIOM_layer_num'])
+    
+    if freezeIdx:
+        df_geom['Index'] = 0
+        for idx in freezeIdx:
+            df_geom.loc[df_geom['ONIOM_layer'] == idx, 'Index'] = -1
 
     outfile = open(file_name, 'w')
     outfile.write(route)
