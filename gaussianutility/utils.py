@@ -406,7 +406,9 @@ def ONIOM_sort(file_name, sort_idx = 0, freeze_idx = 0):
     if freeze_idx:
         for idx in freeze_idx:
             df_geom.loc[df_geom['ONIOM_layer'] == idx, 'Index'] = -1
-
+    
+    df_geom = df_geom[['Atom', 'Index', 'x', 'y', 'z', 'ONIOM_layer']]
+    
     outfile = open(file_name, 'w')
     outfile.write(route)
     outfile.write('\n')
