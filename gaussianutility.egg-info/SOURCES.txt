@@ -1,7 +1,6 @@
 README.md
 setup.py
 gaussianutility/__init__.py
-gaussianutility/freezeLow.py
 gaussianutility/genFeat.py
 gaussianutility/oniomSort.py
 gaussianutility/pathFeature.py

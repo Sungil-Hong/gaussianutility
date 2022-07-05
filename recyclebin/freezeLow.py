@@ -11,4 +11,3 @@ def main(file_name):
     Currently, ".com" and ".gjf" formats are supported.
     """
     freeze_low(file_name)
-    

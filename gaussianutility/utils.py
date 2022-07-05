@@ -310,18 +310,17 @@ def feat_gen(file_name):
     return_var_str = ', '.join(map(str,return_var))
 
     return return_var_str
-    
+
 #=======================================================================
-def freeze_low(file_name):
-    """Freeze Cartesian coordinates of atoms in the low ONIOM layer.
-    Only .com and .gjf file is supported.
+def read_input(file_name):
+    """Return input file format, route section, title (including spin/multiplicity), and geometry.
+    'route' and 'title_and_spin' are string.
+    If input is in ONIOM format, geom is pandas dataframe; otherwise, list
     """
     informat = file_name.rsplit(".",1)[-1]
-    if not informat == 'com' or informat == 'gjf':
-        raise TypeError('The input file format must be Gaussian input (com or gjf)')
-        
-    lines = open(file_name).readlines()
 
+    inputfile = open(file_name,'r')
+    lines = open(file_name).readlines()
     for idx, line in enumerate(lines):
         if "#" in line:
             idx_route = idx
@@ -333,126 +332,59 @@ def freeze_low(file_name):
         route += lines[idx_route+1]
         idx_route += 1
 
-    if not ("oniom" or "ONIOM" or "Oniom") in route:
-        raise AttributeError("Must have ONIOM formulation")
+    title_and_spin = lines[idx_route+2:idx_route+5]
 
-    if not "modredundant" in route:
-        lines[idx_route] = lines[idx_route].replace('opt', 'opt=modredundant')
-
-    connect = 0
-    if "geom=connectivity" in route:
-        connect += 1
-
-    geom = []
-
+    geom=[]
     for idx2, line in enumerate(lines[idx_route+5:]):
         geom.append(line.split())
         geomEndIdx = idx_route+idx2+5
         if len(line) <= 2: break
-
-    # if connect == 1:
-    #     for id3, line in enumerate(lines[])
     geom = list(filter(None, geom))
+    
+    if ("oniom" or "ONIOM" or "Oniom") in route: 
+        lineLen = 0
+        for line in geom:
+            if len(line) > lineLen: lineLen = len(line)
 
-    lineLen = 0
-    for line in geom:
-        if len(line) > lineLen: lineLen = len(line)
+        if lineLen == 5:
+            df_geom = pd.DataFrame(geom, columns = ['Atom','x','y','z','ONIOM_layer'])
+        elif lineLen > 5:
+            clmnName = []
+            for i in range(lineLen):
+                name = "C{}".format(i)
+                clmnName.append(name)
 
-    clmnName = []
-    for i in range(lineLen):
-        name = "Column {}".format(i)
-        clmnName.append(name)
+            df_geom = pd.DataFrame(geom, columns = clmnName)
+            df_geom = df_geom.iloc[ : ,0:6]
+            df_geom = df_geom.rename({'C0':'Atom', 'C1':'Index', 'C2':'x', 'C3':'y', 'C4':'z', 'C5':'ONIOM_layer'}, axis='columns')
 
-    clmnName[5] = 'ONIOM layer'
-    df_geom = pd.DataFrame(geom, columns= clmnName)
-    oniom_layer = pd.DataFrame(df_geom, columns = ['ONIOM layer'])
 
-    Low_level = np.array(oniom_layer.index[oniom_layer['ONIOM layer']=='L'])+1
-
-    if connect == 0:
-        editfile = open(file_name, 'w')
-        for line in lines[:geomEndIdx]:
-            editfile.write(line)
-        editfile.write('\n')
-        for elem in Low_level:
-            editfile.write('X ' + str(elem) + ' F\n')
-        editfile.write('\n')
-        editfile.close()
-
-    if connect == 1:
-        for idx, line in enumerate(lines[geomEndIdx+1:]):
-            if len(line) <= 2:
-                connectEndIdx = geomEndIdx+idx+1
-                break
-
-        editfile = open(file_name, 'w')
-        for line in lines[:connectEndIdx+1]:
-            editfile.write(line)
-        for elem in Low_level:
-            editfile.write('X ' + str(elem) + ' F\n')
-        editfile.write('\n')
-        editfile.close()
-
+        return informat, route, title_and_spin, df_geom
+    
+    else:
+        return informat, route, title_and_spin, geom
 
 
 #=======================================================================
-def ONIOM_sort(file_name, sort_idx = 0):
+def ONIOM_sort(file_name, sort_idx = 0, freeze_idx = 0):
     
-    inputfile = open(file_name,'r')
-
-    for index, line in enumerate(inputfile):
-        if line.startswith("#"):
-            routeBegin = index
-        if len(line) > 2 and line[0].isdigit() * (line[1]==' ') * line[2].isdigit():
-            geomBegin = index+1
-            break
-
-    for index, line in enumerate(inputfile, geomBegin):
-        if len(line) < 3:
-            geomEnd = index-1
-            break
-
-    route=[]
-    rawGeom=[]
-    rest=[]
-
-    for index, line in enumerate(inputfile):
-        if index >= routeBegin and index < geomBegin:
-            route.append(line)
-        if index >= geomBegin and index <= geomEnd:
-            rawGeom.append(line.split())
-        if index > geomEnd+3:
-            rest.append(line)
-
-    oniomtest = 0
-    for elem in route:
-        if ('oniom' or 'Oniom' or 'ONIOM') in elem:
-            oniomtest += 1
-
-        if ('geom=connectivity') in elem:
-            elem.replace('geom=connectivity','')
-
-    if oniomtest == 0: raise ValueError("Need to be ONIOM file")
+    if not sort_idx:
+        sort_idx = 'Atom'
+    if not sort_idx in ['Atom','x','y','z']:
+        raise ValueError(" Sort index must be \'x\', \'y\', \'z\', or \'Atom\' ")  
+        
+    informat, route, title_and_spin, df_geom = read_input(file_name)
     
-    lineLen = 0
-    for line in rawGeom:
-        if len(line) > lineLen: lineLen = len(line)
-
-    if lineLen == 5:
-        df_geom = pd.DataFrame(rawGeom, columns = ['Atom','x','y','z','ONIOM_layer'])
-    elif lineLen > 5:
-        clmnName = []
-        for i in range(lineLen):
-            name = "C{}".format(i)
-            clmnName.append(name)
-
-        df_geom = pd.DataFrame(rawGeom, columns = clmnName)
-        df_geom = df_geom.iloc[ : ,0:6]
-        df_geom = df_geom.rename({'C0':'Atom', 'C1':'Index', 'C2':'x', 'C3':'y', 'C4':'z', 'C5':'ONIOM_layer'}, axis='columns')
-
+    if not informat == 'com' or informat == 'gjf':
+        raise TypeError('The input file format must be Gaussian input (com or gjf)') 
+        
+    if not ("oniom" or "ONIOM" or "Oniom") in route:
+        raise AttributeError("Must have ONIOM formulation")      
+    if "geom=connectivity" in route:
+        route = route.replace("geom=connectivity","")
+    
     df_layer_sort = pd.DataFrame({'ONIOM_layer': ['H','M','L']})
     layer_sort_mapping = df_layer_sort.reset_index().set_index('ONIOM_layer')
-
     df_geom['ONIOM_layer_num'] = df_geom['ONIOM_layer'].map(layer_sort_mapping['index'])
 
     if sort_idx == 'Atom':
@@ -462,18 +394,25 @@ def ONIOM_sort(file_name, sort_idx = 0):
 
         df_atom_sort = pd.DataFrame(elem[1:], columns = ['symbol'])
         atom_sort_mapping = df_atom_sort.reset_index().set_index('symbol')
-
         df_geom['Atomic_num'] = df_geom['Atom'].map(atom_sort_mapping['index'])
+        
         df_geom = df_geom.sort_values(by=['ONIOM_layer_num', 'Atomic_num'], ascending = [1,0])
         df_geom = df_geom.drop(columns=['ONIOM_layer_num', 'Atomic_num'])
     else:
         df_geom = df_geom.sort_values(by=['ONIOM_layer_num', sort_idx])
         df_geom = df_geom.drop(columns=['ONIOM_layer_num'])
-
+    
+    df_geom['Index'] = 0
+    if freeze_idx:
+        for idx in freeze_idx:
+            df_geom.loc[df_geom['ONIOM_layer'] == idx, 'Index'] = -1
+    
+    df_geom = df_geom[['Atom', 'Index', 'x', 'y', 'z', 'ONIOM_layer']]
+    
     outfile = open(file_name, 'w')
-    routeStr = ""
-    routeStr = routeStr.join(route)
-    outfile.write(routeStr)
+    outfile.write(route)
+    outfile.write('\n')
+    outfile.write(''.join(title_and_spin))
     outfile.write(df_geom.to_string(index=False, header=False))
     outfile.write('\n\n')
     outfile.close()
