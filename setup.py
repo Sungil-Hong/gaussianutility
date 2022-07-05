@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="gaussianutility",
-    version="0.1.4",
+    version="0.1.5",
     author="Sungil Hong",
     author_email="suh33@pitt.edu",
     description="Useful utilities to use Gaussian09 software",
@@ -15,7 +15,7 @@ setuptools.setup(
                 'xgeom = gaussianutility.xgeom:main',
                 'pathFeature = gaussianutility.pathFeature:main',
                 'genFeat = gaussianutility.genFeat:main',
-                'freezeLow = gaussianutility.freezeLow:main',
+                'freezeLayer = gaussianutility.freezeLayer:main',
                 'oniomSort = gaussianutility.oniomSort:main'
                 ]},
     url="https://github.com/Sungil-Hong/gaussianutility",

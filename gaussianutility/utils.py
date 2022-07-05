@@ -421,8 +421,15 @@ def ONIOM_sort(file_name, sort_idx = 0, freeze_idx = 0):
     outfile.close()
 
 #=======================================================================
-def freeze_layer(file_name, layer_idx):
+def freeze_layer(file_name, layer_idx = 0):
+    if not layer_idx:
+        layer_idx = 'L'
+        
+    layers = list(layer_idx)
 
+    if ('H' not in layers) and  ('M' not in layers) and ('L' not in layers):
+        raise ValueError("Layer indext should be composed of \'H\', \'M\', \'L\'")
+ 
     informat, route, title_and_spin, df_geom, rest = read_input(file_name)
 
     if not informat == 'com' or informat == 'gjf':
@@ -430,11 +437,6 @@ def freeze_layer(file_name, layer_idx):
 
     if not ("oniom" or "ONIOM" or "Oniom") in route:
         raise AttributeError("Must have ONIOM formulation")
-
-    layers = list(layer_idx)
-
-    if ('H' not in layers) and  ('M' not in layers) and ('L' not in layers):
-        raise ValueError("Layer indext should be composed of \'H\', \'M\', \'L\'")
 
     for layer in layers:
         df_geom.loc[df_geom["ONIOM_layer"] == layer, "Index"] = -1
