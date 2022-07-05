@@ -341,6 +341,10 @@ def read_input(file_name):
         if len(line) <= 2: break
     geom = list(filter(None, geom))
     
+    rest = []
+    for idx3, line in enumerate(lines[geomEndIdx:]):
+        rest.append(line)
+ 
     if ("oniom" or "ONIOM" or "Oniom") in route: 
         lineLen = 0
         for line in geom:
@@ -357,12 +361,11 @@ def read_input(file_name):
             df_geom = pd.DataFrame(geom, columns = clmnName)
             df_geom = df_geom.iloc[ : ,0:6]
             df_geom = df_geom.rename({'C0':'Atom', 'C1':'Index', 'C2':'x', 'C3':'y', 'C4':'z', 'C5':'ONIOM_layer'}, axis='columns')
-
-
-        return informat, route, title_and_spin, df_geom
+    
+        return informat, route, title_and_spin, df_geom, rest
     
     else:
-        return informat, route, title_and_spin, geom
+        return informat, route, title_and_spin, geom, rest
 
 
 #=======================================================================
@@ -373,7 +376,7 @@ def ONIOM_sort(file_name, sort_idx = 0, freeze_idx = 0):
     if not sort_idx in ['Atom','x','y','z']:
         raise ValueError(" Sort index must be \'x\', \'y\', \'z\', or \'Atom\' ")  
         
-    informat, route, title_and_spin, df_geom = read_input(file_name)
+    informat, route, title_and_spin, df_geom, rest = read_input(file_name)
     
     if not informat == 'com' or informat == 'gjf':
         raise TypeError('The input file format must be Gaussian input (com or gjf)') 
@@ -416,3 +419,33 @@ def ONIOM_sort(file_name, sort_idx = 0, freeze_idx = 0):
     outfile.write(df_geom.to_string(index=False, header=False))
     outfile.write('\n\n')
     outfile.close()
+
+#=======================================================================
+def freeze_layer(file_name, layer_idx):
+
+    informat, route, title_and_spin, df_geom, rest = read_input(file_name)
+
+    if not informat == 'com' or informat == 'gjf':
+        raise TypeError('The input file format must be Gaussian input (com or gjf)')
+
+    if not ("oniom" or "ONIOM" or "Oniom") in route:
+        raise AttributeError("Must have ONIOM formulation")
+
+    layers = list(layer_idx)
+
+    if ('H' not in layers) and  ('M' not in layers) and ('L' not in layers):
+        raise ValueError("Layer indext should be composed of \'H\', \'M\', \'L\'")
+
+    for layer in layers:
+        df_geom.loc[df_geom["ONIOM_layer"] == layer, "Index"] = -1
+
+    outfile = open(file_name, 'w')
+    outfile.write(route)
+    outfile.write('\n')
+    outfile.write(''.join(title_and_spin))
+    outfile.write(df_geom.to_string(index=False, header=False))
+    outfile.write('\n')
+    outfile.write(''.join(rest))
+    outfile.close()
+
+
