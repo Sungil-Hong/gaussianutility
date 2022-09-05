@@ -362,11 +362,16 @@ def read_input(file_name):
             df_geom = df_geom.iloc[ : ,0:6]
             df_geom = df_geom.rename({'C0':'Atom', 'C1':'Index', 'C2':'x', 'C3':'y', 'C4':'z', 'C5':'ONIOM_layer'}, axis='columns')
     
-        return informat, route, title_and_spin, df_geom, rest
-    
     else:
-        return informat, route, title_and_spin, geom, rest
+        lineLen = 0
+        for line in geom:
+            if len(line) > lineLen: lineLen = len(line)
+        if lineLen != 4:
+            raise ValueError("Check input file")
 
+        df_geom = pd.DataFrame(geom, columns = ['Atom','x','y','z'])
+
+    return informat, route, title_and_spin, df_geom, rest
 
 #=======================================================================
 def ONIOM_sort(file_name, sort_idx = 0, freeze_idx = 0):
