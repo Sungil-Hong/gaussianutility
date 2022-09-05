@@ -374,7 +374,7 @@ def read_input(file_name):
     return informat, route, title_and_spin, df_geom, rest
 
 #=======================================================================
-def ONIOM_sort(file_name, sort_idx = 0, freeze_idx = 0):
+def input_sort(file_name, sort_idx = 0, freeze_idx = 0):
     
     if not sort_idx:
         sort_idx = 'Atom'
@@ -384,16 +384,21 @@ def ONIOM_sort(file_name, sort_idx = 0, freeze_idx = 0):
     informat, route, title_and_spin, df_geom, rest = read_input(file_name)
     
     if not informat == 'com' or informat == 'gjf':
-        raise TypeError('The input file format must be Gaussian input (com or gjf)') 
+        raise TypeError("The input file format must be Gaussian input (com or gjf)") 
         
-    if not ("oniom" or "ONIOM" or "Oniom") in route:
-        raise AttributeError("Must have ONIOM formulation")      
+    oniom_idx = 0
+    if ("oniom" or "ONIOM" or "Oniom") in route:
+        oniom_idx = 1
+        if freeze_idx != 0:
+            raise ValueError("Freezing option only supports ONIOM type input")
+     
     if "geom=connectivity" in route:
         route = route.replace("geom=connectivity","")
     
-    df_layer_sort = pd.DataFrame({'ONIOM_layer': ['H','M','L']})
-    layer_sort_mapping = df_layer_sort.reset_index().set_index('ONIOM_layer')
-    df_geom['ONIOM_layer_num'] = df_geom['ONIOM_layer'].map(layer_sort_mapping['index'])
+    if oniom_idx == 1:
+        df_layer_sort = pd.DataFrame({'ONIOM_layer': ['H','M','L']})
+        layer_sort_mapping = df_layer_sort.reset_index().set_index('ONIOM_layer')
+        df_geom['ONIOM_layer_num'] = df_geom['ONIOM_layer'].map(layer_sort_mapping['index'])
 
     if sort_idx == 'Atom':
         elem = []
@@ -404,18 +409,29 @@ def ONIOM_sort(file_name, sort_idx = 0, freeze_idx = 0):
         atom_sort_mapping = df_atom_sort.reset_index().set_index('symbol')
         df_geom['Atomic_num'] = df_geom['Atom'].map(atom_sort_mapping['index'])
         
-        df_geom = df_geom.sort_values(by=['ONIOM_layer_num', 'Atomic_num'], ascending = [1,0])
-        df_geom = df_geom.drop(columns=['ONIOM_layer_num', 'Atomic_num'])
+        if oniom_idx == 0:
+            df_geom = df_geom.sort_values(by=['Atomic_num'], ascending = 0)
+            df_geom = df_geom.drop(columns=['Atomic_num'])
+            
+        elif oniom_idx == 1:
+            df_geom = df_geom.sort_values(by=['ONIOM_layer_num', 'Atomic_num'], ascending = [1,0])
+            df_geom = df_geom.drop(columns=['ONIOM_layer_num', 'Atomic_num'])
     else:
-        df_geom = df_geom.sort_values(by=['ONIOM_layer_num', sort_idx])
-        df_geom = df_geom.drop(columns=['ONIOM_layer_num'])
+        if oniom_idx == 0:
+            df_geom = df_geom.sort_values(by=sort_idx)
+            
+        elif oniom_idx == 1:
+            df_geom = df_geom.sort_values(by=['ONIOM_layer_num', sort_idx])
+            df_geom = df_geom.drop(columns=['ONIOM_layer_num'])
     
-    df_geom['Index'] = 0
     if freeze_idx:
+        df_geom['Index'] = 0
+
         for idx in freeze_idx:
             df_geom.loc[df_geom['ONIOM_layer'] == idx, 'Index'] = -1
     
-    df_geom = df_geom[['Atom', 'Index', 'x', 'y', 'z', 'ONIOM_layer']]
+        df_geom = df_geom[['Atom', 'Index', 'x', 'y', 'z', 'ONIOM_layer']]
+        
     
     outfile = open(file_name, 'w')
     outfile.write(route)
