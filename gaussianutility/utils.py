@@ -374,7 +374,7 @@ def read_input(file_name):
     return informat, route, title_and_spin, df_geom, rest
 
 #=======================================================================
-def input_sort(file_name, sort_idx = 0, freeze_idx = 0):
+def input_sort(file_name, sort_idx = 0):
     
     if not sort_idx:
         sort_idx = 'Atom'
@@ -389,8 +389,6 @@ def input_sort(file_name, sort_idx = 0, freeze_idx = 0):
     oniom_idx = 0
     if ("oniom" or "ONIOM" or "Oniom") in route:
         oniom_idx = 1
-        if freeze_idx != 0:
-            raise ValueError("Freezing option only supports ONIOM type input")
      
     if "geom=connectivity" in route:
         route = route.replace("geom=connectivity","")
@@ -416,6 +414,7 @@ def input_sort(file_name, sort_idx = 0, freeze_idx = 0):
         elif oniom_idx == 1:
             df_geom = df_geom.sort_values(by=['ONIOM_layer_num', 'Atomic_num'], ascending = [1,0])
             df_geom = df_geom.drop(columns=['ONIOM_layer_num', 'Atomic_num'])
+            
     else:
         if oniom_idx == 0:
             df_geom = df_geom.sort_values(by=sort_idx)
@@ -424,11 +423,6 @@ def input_sort(file_name, sort_idx = 0, freeze_idx = 0):
             df_geom = df_geom.sort_values(by=['ONIOM_layer_num', sort_idx])
             df_geom = df_geom.drop(columns=['ONIOM_layer_num'])
     
-    if freeze_idx:
-        df_geom['Index'] = 0
-
-        for idx in freeze_idx:
-            df_geom.loc[df_geom['ONIOM_layer'] == idx, 'Index'] = -1
     
         df_geom = df_geom[['Atom', 'Index', 'x', 'y', 'z', 'ONIOM_layer']]
         
