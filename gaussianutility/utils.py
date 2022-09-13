@@ -506,7 +506,7 @@ def com2VASP(com_file, title = 0, lattice_param = 0):
     uniqatomlist = np.array(uniqatomlist)
     uniqatomcount= np.array(uniqatomcount, dtype=str)
     
-    outfilename = com_file.rsplit(".",1)[0] + ".vasp"
+    outfilename = title.rsplit(".",1)[0] + ".vasp"
     outfile = open(outfilename, 'w')
     outfile.write(title+'\n')
     outfile.write('1.0\n')
