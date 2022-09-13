@@ -6,7 +6,7 @@ from gaussianutility.utils import com2VASP
                                    'show_default': True})
 @click.argument('com_file', type=str)
 @click.option('-t', '--title', required=False, help='Title of the input file')
-@click.option('-l', '--lattice_param', required=False, help='List of lattice parameters, [a,b,c]')
+@click.option('-l', '--lattice_param', required=False, nargs = 3, help='List of lattice parameters, a, b, and c')
 
 def main(com_file, title, lattice_param):
     """
