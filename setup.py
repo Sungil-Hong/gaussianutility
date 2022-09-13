@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="gaussianutility",
-    version="0.1.7",
+    version="0.1.8",
     author="Sungil Hong",
     author_email="suh33@pitt.edu",
     description="Useful utilities to use Gaussian09 software",
@@ -16,7 +16,8 @@ setuptools.setup(
                 'pathFeature = gaussianutility.pathFeature:main',
                 'genFeat = gaussianutility.genFeat:main',
                 'freezeLayer = gaussianutility.freezeLayer:main',
-                'inputSort = gaussianutility.inputSort:main'
+                'inputSort = gaussianutility.inputSort:main',
+                'com2vasp = gaussianutility.com2vasp:main'
                 ]},
     url="https://github.com/Sungil-Hong/gaussianutility",
     packages=setuptools.find_packages(),
@@ -26,5 +27,5 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
-    install_requires=['numpy>=1.17.2']
+    install_requires=['numpy>=1.17.2','pandas','periodictable','ase']
 )
