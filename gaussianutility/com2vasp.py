@@ -14,5 +14,5 @@ def main(com_file, title, lattice_param):
     Currently, only support cubin structure, where a,b,c represent lattice parameters.
     """
 
-    com2VASP(come_file, title, lattice_param)
+    com2VASP(com_file, title, lattice_param)
     
