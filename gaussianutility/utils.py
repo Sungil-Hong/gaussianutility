@@ -7,8 +7,8 @@ import ase
 from ase import atoms
 import networkx as nx
 from periodictable import elements
-import featpro.utils as utils
-from featpro.pos import connectivity
+#import featpro.utils as utils
+#from featpro.pos import connectivity
 from itertools import islice
 
 #=======================================================================
