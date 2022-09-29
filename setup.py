@@ -17,7 +17,6 @@ setuptools.setup(
                 'genFeat = gaussianutility.genFeat:main',
                 'freezeLayer = gaussianutility.freezeLayer:main',
                 'inputSort = gaussianutility.inputSort:main',
-                'com2vasp = gaussianutility.com2vasp:main'
                 ]},
     url="https://github.com/Sungil-Hong/gaussianutility",
     packages=setuptools.find_packages(),
