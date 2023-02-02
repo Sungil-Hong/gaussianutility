@@ -394,7 +394,7 @@ def input_sort(file_name, sort_idx = 0):
         route = route.replace("geom=connectivity","")
     
     if oniom_idx == 1:
-        df_layer_sort = pd.DataFrame({'ONIOM_layer': ['H','M','L']})
+        df_layer_sort = pd.DataFrame({'ONIOM_layer': ['L','M','H',]})
         layer_sort_mapping = df_layer_sort.reset_index().set_index('ONIOM_layer')
         df_geom['ONIOM_layer_num'] = df_geom['ONIOM_layer'].map(layer_sort_mapping['index'])
 
