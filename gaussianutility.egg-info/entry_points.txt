@@ -4,4 +4,3 @@ genFeat = gaussianutility.genFeat:main
 oniomSort = gaussianutility.oniomSort:main
 pathFeature = gaussianutility.pathFeature:main
 xgeom = gaussianutility.xgeom:main
-

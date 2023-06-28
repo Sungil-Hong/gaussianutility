@@ -6,10 +6,13 @@ Home-page: https://github.com/Sungil-Hong/gaussianutility
 Author: Sungil Hong
 Author-email: suh33@pitt.edu
 License: UNKNOWN
-Description: # gaussianutility
 Platform: UNKNOWN
 Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: MIT License
 Classifier: Operating System :: OS Independent
 Requires-Python: >=3.6
 Description-Content-Type: text/markdown
+License-File: LICENSE
+
+# gaussianutility
+
