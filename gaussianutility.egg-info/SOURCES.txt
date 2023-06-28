@@ -2,15 +2,9 @@ LICENSE
 README.md
 setup.py
 gaussianutility/__init__.py
-gaussianutility/freezeLayer.py
-gaussianutility/genFeat.py
-gaussianutility/oniomSort.py
-gaussianutility/pathFeature.py
-gaussianutility/utils.py
-gaussianutility/xgeom.py
+gaussianutility/utilities.py
 gaussianutility.egg-info/PKG-INFO
 gaussianutility.egg-info/SOURCES.txt
 gaussianutility.egg-info/dependency_links.txt
-gaussianutility.egg-info/entry_points.txt
 gaussianutility.egg-info/requires.txt
 gaussianutility.egg-info/top_level.txt

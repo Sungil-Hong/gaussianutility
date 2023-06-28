@@ -1,7 +1,7 @@
 Metadata-Version: 2.1
 Name: gaussianutility
-Version: 0.1.5
-Summary: Useful utilities to use Gaussian09 software
+Version: 0.2.0
+Summary: Useful utilities to use Gaussian09/16 software
 Home-page: https://github.com/Sungil-Hong/gaussianutility
 Author: Sungil Hong
 Author-email: suh33@pitt.edu

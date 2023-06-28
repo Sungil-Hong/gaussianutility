@@ -1,1 +1,7 @@
+argparse>=1.1
+ase
+matplotlib>=3.7.1
+mendeleev>=0.14.0
 numpy>=1.17.2
+pandas>=1.5.3
+periodictable>=1.6.1

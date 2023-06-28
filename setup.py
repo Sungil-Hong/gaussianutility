@@ -29,11 +29,8 @@ setuptools.setup(
     install_requires=['numpy>=1.17.2',
                       'pandas>=1.5.3',
                       'periodictable>=1.6.1',
-                      'ase>=3.22.1',
-                      'math',
-                      'sys',
+                      'ase',
                       'argparse>=1.1',
                       'matplotlib>=3.7.1',
-                      'itertools',
                       'mendeleev>=0.14.0']
 )

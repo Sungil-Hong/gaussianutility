@@ -1,6 +1,0 @@
-[console_scripts]
-freezeLayer = gaussianutility.freezeLayer:main
-genFeat = gaussianutility.genFeat:main
-oniomSort = gaussianutility.oniomSort:main
-pathFeature = gaussianutility.pathFeature:main
-xgeom = gaussianutility.xgeom:main
