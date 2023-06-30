@@ -36,5 +36,5 @@ setuptools.setup(
                       'ase',
                       'argparse>=1.1',
                       'matplotlib>=3.5.3',
-                      'mendeleev>=0.14.0']
+                      'mendeleev>=0.12.0']
 )
