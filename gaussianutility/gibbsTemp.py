@@ -129,16 +129,16 @@ def main():
         StotArr.append(Stot)
         EtotArr.append(Etot)
 
-    StotArr = np.array(StotArr)
-    EtotArr = np.array(EtotArr)
+        StotArr = np.array(StotArr)
+        EtotArr = np.array(EtotArr)
 
-    Hcorr = EtotArr + kB*temperature*Na # Thermal corrections to Enthalpy
-    Gcorr = Hcorr - temperature * StotArr # Thermal corrections to Free energy
-    Gibbs = (ElectE + Gcorr) / 2625.4996394799e3 # Final Gibbs free energy in Hartree
+        Hcorr = EtotArr + kB*temp*Na # Thermal corrections to Enthalpy
+        Gcorr = Hcorr - temperature * StotArr # Thermal corrections to Free energy
+        Gibbs = (ElectE + Gcorr) / 2625.4996394799e3 # Final Gibbs free energy in Hartree
 
-    temperature = np.ndarray.tolist(np.round(temperature,decimals=6))
-    Gibbs = np.ndarray.tolist(np.round(Gibbs,decimals=6))
+        temperature = np.ndarray.tolist(np.round(temperature,decimals=6))
+        Gibbs = np.ndarray.tolist(np.round(Gibbs,decimals=6))
 
-    print("Temperature [K]: " + str(temperature).strip('[]'))
-    print("Gibbs free energy [Hartree]: " + str(Gibbs).strip('[]'))
+        print("Temperature [K]: " + str(temperature).strip('[]'))
+        print("Gibbs free energy [Hartree]: " + str(Gibbs).strip('[]'))
 
