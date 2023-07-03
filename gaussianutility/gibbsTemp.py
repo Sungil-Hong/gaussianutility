@@ -25,15 +25,21 @@ def Contributions(temp, mass, press, vibTemp, multiplicity, rho_r, theta_r):
     elif len(theta_r) == 1:
         qr = m.pi**(1/2)/rho_r*m.sqrt((temp/(theta_r[0])))
         
-    Sr = Rgas*(m.log(qr)+3/2)
-    Er = 3/2*Rgas*temp
+    if 'qr' in locals():
+        Sr = Rgas*(m.log(qr)+3/2)
+        Er = 3/2*Rgas*temp
+    else:
+        Sr = 0
+        Er = 0
 
     ## Vibrational part
     summ1 = 0 # for entropy contribution
     summ2 = 0 # for energy contribution
+
     for val in vibTemp:
         summ1 += val/temp/(m.exp(val/temp) - 1) - m.log(1-m.exp(-val/temp))
         summ2 += val*(1/2 + 1/(m.exp(val/temp)-1))
+
     Sv, Ev = Rgas*np.array([summ1, summ2])
 
     ## Electronic part
@@ -125,6 +131,10 @@ def main():
     # Arrays of entropy and energy corrections in the given temperature (range)
     StotArr=[]
     EtotArr=[]
+    
+    if 'rho_r' not in locals():
+        rho_r = []
+        theta_r = []
 
     for temp in temperature:
         Stot, Etot = Contributions(temp, mass, press, vibTemp, multiplicity, rho_r, theta_r)
@@ -133,7 +143,7 @@ def main():
 
     StotArr = np.array(StotArr)
     EtotArr = np.array(EtotArr)
-
+    
     Hcorr = EtotArr + kB*temperature*Na # Thermal corrections to Enthalpy
     Gcorr = Hcorr - temperature * StotArr # Thermal corrections to Free energy
     Gibbs = (ElectE + Gcorr) / 2625.4996394799e3 # Final Gibbs free energy in Hartree
