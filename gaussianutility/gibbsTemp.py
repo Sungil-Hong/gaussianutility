@@ -13,22 +13,20 @@ Na = 6.02214076e23
 # Calculate contributions from translational, rotational, vibrational, and eletronic motions
 # The equations are sourced from "Thermochemistry in Gaussian" written by Joseph W. Ochterski (2000)
 # https://gaussian.com/wp-content/uploads/dl/thermo.pdf
-
-# Function to calculate all conbtibutions
-def Contributions(temp,mass,press,vibTemp,multiplicity): # temp is a single float value
+def Contributions(temp, mass, press, vibTemp, multiplicity, rho_r, theta_r):
     ## Translational part
     qt = m.pow(2*m.pi*mass*kB*temp/h**2, 3/2) * kB*temp/press
     St = Rgas*(m.log(qt)+1+3/2)
     Et = 3/2*Rgas*temp
 
     ## Rotational part
-    Sr, Er = 0, 0
-    if 'rho_r' in globals():
-        if 'theta_rx' in globals():    
-            qr = m.pi**(1/2)/rho_r*m.sqrt((temp**3/(theta_rx*theta_ry*theta_rz)))
-        else: qr = m.pi**(1/2)/rho_r*m.sqrt((temp/(theta_r)))
-        Sr += Rgas*(m.log(qr)+3/2)
-        Er = 3/2*Rgas*temp
+    if len(theta_r) > 1:    
+        qr = m.pi**(1/2)/rho_r*m.sqrt((temp**3/np.prod(theta_r)))
+    elif len(theta_r) == 1:
+        qr = m.pi**(1/2)/rho_r*m.sqrt((temp/(theta_r[0])))
+        
+    Sr = Rgas*(m.log(qr)+3/2)
+    Er = 3/2*Rgas*temp
 
     ## Vibrational part
     summ1 = 0 # for entropy contribution
@@ -46,7 +44,7 @@ def Contributions(temp,mass,press,vibTemp,multiplicity): # temp is a single floa
     Etot = Et + Er + Ev + Ee
     
     return Stot, Etot # return total entropy correction and energy correction
-
+    
 def main():
     # Print error/help messages that looks like argparse functionality
     if len(sys.argv) == 1:
@@ -100,11 +98,15 @@ def main():
     for idx, line in enumerate(thermochem):
         if "Pressure" in line:
             press = float(line.split()[4])*101325 # Pa
-        if "Molecular mass" in line: mass = float(line.split()[2])*1.6605391e-27 # kg
-        if "Rotational symmetry number" in line: rho_r = float(line.split()[3]) 
-        if "Rotational temperature" in line: 
-            if len(line.split()) < 5: theta_r = float(line.split()[3])         
-            else: theta_rx, theta_ry, theta_rz = np.float64(np.array(line.split()[3:6]))
+        if "Molecular mass" in line:
+            mass = float(line.split()[2])*1.6605391e-27 # kg
+        if "Rotational symmetry number" in line:\
+            rho_r = float(line.split()[3]) 
+        if "Rotational temperatures" in line: 
+            if len(line.split()) < 5: 
+                theta_r = np.array([float(line.split()[3])])
+            else:
+                theta_r = np.float64(np.array(line.split()[3:6]))
         if "Vibrational temperature" in line:
             vibTempBeginIdx = idx
         if "Zero-point correction" in line: 
@@ -125,20 +127,21 @@ def main():
     EtotArr=[]
 
     for temp in temperature:
-        Stot, Etot = Contributions(temp,mass,press,vibTemp,multiplicity)
+        Stot, Etot = Contributions(temp, mass, press, vibTemp, multiplicity, rho_r, theta_r)
         StotArr.append(Stot)
         EtotArr.append(Etot)
 
-        StotArr = np.array(StotArr)
-        EtotArr = np.array(EtotArr)
+    StotArr = np.array(StotArr)
+    EtotArr = np.array(EtotArr)
 
-        Hcorr = EtotArr + kB*temp*Na # Thermal corrections to Enthalpy
-        Gcorr = Hcorr - temperature * StotArr # Thermal corrections to Free energy
-        Gibbs = (ElectE + Gcorr) / 2625.4996394799e3 # Final Gibbs free energy in Hartree
+    Hcorr = EtotArr + kB*temperature*Na # Thermal corrections to Enthalpy
+    Gcorr = Hcorr - temperature * StotArr # Thermal corrections to Free energy
+    Gibbs = (ElectE + Gcorr) / 2625.4996394799e3 # Final Gibbs free energy in Hartree
 
-        temperature = np.ndarray.tolist(np.round(temperature,decimals=6))
-        Gibbs = np.ndarray.tolist(np.round(Gibbs,decimals=6))
+    temperature = np.ndarray.tolist(np.round(temperature,decimals=6))
+    Gibbs = np.ndarray.tolist(np.round(Gibbs,decimals=6))
 
-        print("Temperature [K]: " + str(temperature).strip('[]'))
-        print("Gibbs free energy [Hartree]: " + str(Gibbs).strip('[]'))
+    print("Temperature [K]: " + str(temperature).strip('[]'))
+    print("Gibbs free energy [Hartree]: " + str(Gibbs).strip('[]'))
+
 
