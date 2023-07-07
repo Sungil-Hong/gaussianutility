@@ -31,7 +31,7 @@ setuptools.setup(
         "Operating System :: OS Independent"],
     python_requires='>=3.6',
     install_requires=['numpy>=1.17.2',
-                      'pandas>=1.3.0',
+                      'pandas>=1.1.0',
                       'periodictable>=1.6.1',
                       'ase',
                       'argparse>=1.1',
