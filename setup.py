@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="gaussianutility",
-    version="0.1.0",
+    version="0.1.1",
     author="Sungil Hong",
     author_email="suh33@pitt.edu",
     description="Useful utilities to use Gaussian09/16 software",
