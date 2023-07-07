@@ -17,7 +17,7 @@ These functionalities include:
 1. Convert input structure file type:
    - `com2vasp`: Converts Gaussian input files (.com) to VASP input files (.vasp).
    - `com2xyz`: Converts Gaussian input files (.com) to XYZ coordinate files (.xyz).
-   - `vasp2com`: Converts VASP output files (.vasp) to Gaussian input files (.com).
+   - `vasp2com`: Converts VASP input files (.vasp) to Gaussian input files (.com).
    
 2. Extract structure from output file:
    - `out2com`: Generate Gaussian input files (.com) from Gaussian output files (.out).
@@ -85,17 +85,17 @@ Here are some examples of how to use the utilities:
    com2xyz input.com
    ```
 
-3. Convert a VASP output file to a Gaussian input file:
+3. Convert a VASP input file to a Gaussian input file:
    ```
    vasp2com output.vasp
    ```
 
-4. Convert a Gaussian output file to a Gaussian input file:
+4. Extract optimized geometry to a Gaussian input file from a Gaussian output file:
    ```
    out2com output.out
    ```
 
-5. Convert a Gaussian output file to an XYZ coordinate file:
+5. Extract optimized geometry to an XYZ coordinate file:
    ```
    out2xyz output.out
    ```
@@ -105,14 +105,14 @@ Here are some examples of how to use the utilities:
    spectrum type file_name1 [ratio1 [file_name2 ratio2 ...]]
    ```
 
-7. Freeze a specific layer of atoms in a Gaussian input file:
+7. Freeze a specific ONIOM layer of atoms in a Gaussian input file:
    ```
-   freezeLayer type file_name1 [ratio1 [file_name2 ratio2 ...]]
+   freezeLayer [-i [layer index]] file_name
    ```
 
 8. Calculate the Gibbs free energy at a given temperature:
    ```
-   gibbsTemp type file_name1 [ratio1 [file_name2 ratio2 ...]]
+   gibbsTemp file_name temp1 [temp2 [step_number]]
    ```
 
 9. Print the energy of a Gaussian output file:
@@ -122,7 +122,7 @@ Here are some examples of how to use the utilities:
 
 10. Sort the atoms in a Gaussian input file based on their atomic numbers:
     ```
-    sortInput input.com
+    sortInput [-s [sort index]] [-o [order index]] file_name
     ```
 
 ## Authors
