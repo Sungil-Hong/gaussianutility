@@ -1,10 +1,14 @@
 # Gaussian Utility
 
+[![License Badge](https://img.shields.io/github/license/Sungil-Hong/gaussianutility)](https://github.com/loevlie/GPT4Readability/blob/main/LICENSE)
+[![Issues Badge](https://img.shields.io/github/issues/Sungil-Hong/gaussianutility)](https://github.com/loevlie/GPT4Readability/issues)
+[![Pull Requests Badge](https://img.shields.io/github/issues-pr/Sungil-Hong/gaussianutility)](https://github.com/loevlie/GPT4Readability/pulls)
+[![Contributors Badge](https://img.shields.io/github/contributors/Sungil-Hong/gaussianutility)](https://github.com/loevlie/GPT4Readability/graphs/contributors)
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
+
 The Gaussian Utility is a Python package that provides useful utilities for working with Gaussian 09/16 software. 
 
 Gaussian is a computer program used by chemists, chemical engineers, biochemists, physicists, and other scientists for performing quantum chemistry calculations.
-
-## Purpose and Functionalities
 
 The Gaussian Utility package offers several functionalities to enhance the usage of Gaussian software.
 Especially, this package can address ONIOM-type Gaussian input/output files, which is not widely available in ASE.
@@ -12,7 +16,7 @@ Especially, this package can address ONIOM-type Gaussian input/output files, whi
 Most of the scripts that work on a Gaussian output file are written based Density Functional Theory calculations.
 Hence, the compatibility with different types of calculations, e.g., coupled cluster, Hartree-Fock, semi-empirical, and Møller–Plesset perturbation methodes has not been confirmed yet.
 
-These functionalities include:
+The package includes the following scripts:
 
 1. Convert input structure file type:
    - `com2vasp`: Converts Gaussian input files (.com) to VASP input files (.vasp).
