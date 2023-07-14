@@ -19,16 +19,17 @@ Hence, the compatibility with different types of calculations, e.g., coupled clu
 The package includes the following scripts:
 
 1. Convert input structure file type:
-   - `com2vasp`: Converts Gaussian input files (.com) to VASP input files (.vasp).
-   - `com2xyz`: Converts Gaussian input files (.com) to XYZ coordinate files (.xyz).
-   - `vasp2com`: Converts VASP input files (.vasp) to Gaussian input files (.com).
+   - `com2vasp`: Converts Gaussian input file (.com) to VASP input file (.vasp).
+   - `com2xyz`: Converts Gaussian input file (.com) to XYZ coordinate file (.xyz).
+   - `vasp2com`: Converts VASP input file (.vasp) to Gaussian input file (.com).
+   - `xyz2com`: Converts XYZ coordinate file (.xyz) to Gaussian input file (.com).
    
 2. Extract structure from output file:
-   - `out2com`: Generate Gaussian input files (.com) from Gaussian output files (.out).
-   - `out2xyz`: Generate XYZ coordinate files (.xyz) from Gaussian output files (.out).
+   - `out2com`: Generate Gaussian input file (.com) from Gaussian output file (.out).
+   - `out2xyz`: Generate XYZ coordinate file (.xyz) from Gaussian output file (.out).
 
 3. Spectrum utilities:
-   - `spectrum`: Produces Normal-IR, Raman, or UV-Vis spectra from Gaussian output files (.out).
+   - `spectrum`: Produces Normal-IR, Raman, or UV-Vis spectra from Gaussian output file (.out).
 
 4. Other utilities:
    - `gibbsTemp`: Calculates the Gibbs free energies at given temperatures from a Gaussian output file with frequency calculation.
@@ -79,52 +80,41 @@ These dependencies will be automatically installed when you install the package 
 The Gaussian Utility package provides command-line utilities that can be accessed by running the corresponding command.
 Here are some examples of how to use the utilities:
 
-1. Convert a Gaussian input file to a VASP input file:
+1. Convert a structure file format:
    ```
-   com2vasp input.com
-   ```
-
-2. Convert a Gaussian input file to an XYZ coordinate file:
-   ```
-   com2xyz input.com
+   com2vasp structure.com
+   com2xyz structure.com
+   vasp2com structure.vasp
+   xyz2com structure.xyz
    ```
 
-3. Convert a VASP input file to a Gaussian input file:
-   ```
-   vasp2com output.vasp
-   ```
-
-4. Extract optimized geometry to a Gaussian input file from a Gaussian output file:
+2. Extract optimized geometry from a Gaussian output file:
    ```
    out2com output.out
-   ```
-
-5. Extract optimized geometry to an XYZ coordinate file:
-   ```
    out2xyz output.out
    ```
 
-6. Produce a spectrum from a Gaussian output file:
+3. Produce a spectrum from a Gaussian output file:
    ```
    spectrum type file_name1 [ratio1 [file_name2 ratio2 ...]]
    ```
 
-7. Freeze a specific ONIOM layer of atoms in a Gaussian input file:
+4. Freeze a specific ONIOM layer of atoms in a Gaussian input file:
    ```
    freezeLayer [-i [layer index]] file_name
    ```
 
-8. Calculate the Gibbs free energy at a given temperature:
+5. Calculate the Gibbs free energy at a given temperature:
    ```
    gibbsTemp file_name temp1 [temp2 [step_number]]
    ```
 
-9. Print the energy of a Gaussian output file:
+6. Print the energy of a Gaussian output file:
    ```
    printE file_name
    ```
 
-10. Sort the atoms in a Gaussian input file based on their atomic numbers:
+7. Sort the atoms in a Gaussian input file based on their atomic numbers:
     ```
     sortInput [-s [sort index]] [-o [order index]] file_name
     ```
