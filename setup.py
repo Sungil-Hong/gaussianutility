@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="gaussianutility",
-    version="0.1.1",
+    version="0.1.2",
     author="Sungil Hong",
     author_email="suh33@pitt.edu",
     description="Useful utilities to use Gaussian09/16 software",
@@ -14,6 +14,7 @@ setuptools.setup(
     entry_points={'console_scripts': [
                   'com2vasp = gaussianutility.com2vasp:main',
                   'com2xyz = gaussianutility.com2xyz:main',
+                  'xyz2com = gaussianutility.xyz2com:main',
                   'freezeLayer = gaussianutility.freezeLayer:main',
                   'gibbsTemp = gaussianutility.gibbsTemp:main',
                   'out2com = gaussianutility.out2com:main',
