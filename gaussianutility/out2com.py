@@ -38,7 +38,7 @@ def main():
     output.write(out_file + '\n\n')
     output.write(charge_mult + '\n')
     output.write(df_geom.to_string(index=False, header=False))
-    output.write('\n')
+    output.write('\n\n')
     output.close()
 
 
