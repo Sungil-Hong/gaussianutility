@@ -121,7 +121,7 @@ Here are some examples of how to use the utilities:
 
 ## Authors
 
-The Gaussian Utility package was developed by Sungil Hong. For any inquiries or issues, you can contact Sungil Hong via email at suh33@pitt.edu.
+The Gaussian Utility package was developed by Sungil Hong. For any inquiries or issues, you can contact Sungil Hong via email at s.hong@pitt.edu.
 
 ## License
 
@@ -130,3 +130,10 @@ The Gaussian Utility package is distributed under the MIT License. Please refer 
 ## Additional Information
 
 For more information about the Gaussian Utility package, you can visit the [GitHub repository](https://github.com/Sungil-Hong/gaussianutility). The repository contains the source code, documentation, and examples of usage for the package.
+
+## Acknowledgment
+
+The Gaussian Utility package has developed over multiple computational chemistry research projects conducted in the Computer-Aided Nano and Energy Lab (CANELa), led by Prof. Mpourmpakis at the University of Pittsburgh.
+The projects have been financially supported by U.S. Department of Energy Nuclear Energy University Program (DOE-NEUP) (18-15496), and National Science Foundation (NSF) (1920623),
+and computationally supported by the Center for Research Computing (CRC) at the University of Pittsburgh for performing DFT calculations.
+
