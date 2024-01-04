@@ -8,11 +8,17 @@ import matplotlib.pyplot as plt
 
 ##### Change these lines to modify X range or make corrections #####
 
-IR_wv_range = np.linspace(0,4000,8001) # cm-1
 UV_wl_range = np.linspace(100,500,801) # nm
-#IR_wn_factor = 1
-IR_wn_factor = 0.947 #For M062X; ref: J. Phys. Chem. A, 121(11), 2265 (2017)#
-IR_HWHM = 4 # IR peak half-width at half-max
+UV_alpha = 1 #UV-Vis wavelength scaling factor; default
+#UV_alpha = 1.12 #for M062X; ref: https://doi.org/10.26434/chemrxiv-2022-pfvhc-v3
+UV_delta = 0.4/m.sqrt(2) #UV-Vis bandwith parameter, eV; default
+#UV_delta = 0.21  #for M062X; ref: https://doi.org/10.26434/chemrxiv-2022-pfvhc-v3
+
+IR_wv_range = np.linspace(0,4000,8001) # cm-1
+IR_wn_factor = 1 # default
+#IR_wn_factor = 0.947 #For M062X; ref: J. Phys. Chem. A, 121(11), 2265 (2017)#
+IR_HWHM = 4 # IR peak half-width at half-max, cm-1 # default
+
 
 # Define functions to extract spectrum data from output file(s)
 def uv_vis(file_name):
@@ -94,7 +100,7 @@ def uvGauss(x, f, wv):
     #Gaussian distribution for UV-Vis
     #Reference: https://gaussian.com/uvvisplot/
 #    return 13.062973*f*3099.6*m.exp(-((1/x-1/wv)/0.00032262)**2)
-    return 13.062973*f*E2wvl(m.sqrt(2)*uv_delta)*m.exp(-((wvl2E(x)-wvl2E(wv)/uv_alpha)/uv_delta/m.sqrt(2))**2)
+    return 13.062973*f*E2wvl(m.sqrt(2)*UV_delta)*m.exp(-((wvl2E(x)-wvl2E(wv)/UV_alpha)/UV_delta/m.sqrt(2))**2)
 
 def cauchy(x, mu):
     # Cauchy distribution for normal and raman IR
@@ -263,7 +269,7 @@ def main():
             curve_per_x = []
             for idx, mu in enumerate(frequencies):
                 mu_array = np.ones(len(xrange))*mu
-                curve = np.array(list(map(cauchy,xrange,mu_array)))
+                curve = np.array(list(map(cauchy,xrange,mu_array))) * intensities[idx]
                 curve_per_x.append(curve)
             
             final_curve = np.sum(curve_per_x, axis=0)
