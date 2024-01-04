@@ -6,6 +6,14 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+##### Change these lines to modify X range or make corrections #####
+
+IR_wv_range = np.linspace(0,4000,8001) # cm-1
+UV_wl_range = np.linspace(100,500,801) # nm
+#IR_wn_factor = 1
+IR_wn_factor = 0.947 #For M062X; ref: J. Phys. Chem. A, 121(11), 2265 (2017)#
+IR_HWHM = 4 # IR peak half-width at half-max
+
 # Define functions to extract spectrum data from output file(s)
 def uv_vis(file_name):
     readfile = open(file_name).readlines()
@@ -20,15 +28,14 @@ def uv_vis(file_name):
             
     for line in readfile[ex_idx:]:
         if 'Excited State' in line:
-            wavelengths.append(line.split()[6])
-            strengths.append(line.split()[8].split('=')[1])
+            wavelengths.append(float(line.split()[6]))
+            strengths.append(float(line.split()[8].split('=')[1]))
             
     if len(wavelengths) == 0:
         raise TypeError('The Gaussian job does not look like excited state calculations')
 
-    wavelengths = np.array(wavelengths, dtype='float')
-    wavelengths = np.rint(wavelengths)
-    strengths = np.array(strengths, dtype='float')
+    wavelengths = np.array(wavelengths)
+    strengths = np.array(strengths)
     
     return wavelengths, strengths
 
@@ -47,9 +54,8 @@ def ir(file_name):
     if len(intensities) == 0:
         raise TypeError('The Gaussian job does not look like conntaining normal IR information')
             
-    frequencies = np.array(frequencies, dtype='float').flatten()
-    frequencies = np.rint(frequencies)
-    intensities = np.array(intensities, dtype='float').flatten()
+    frequencies = np.array(frequencies, dtype='float').flatten() #cm-1
+    intensities = np.array(intensities, dtype='float').flatten() #km/mole
 
     return frequencies, intensities
 
@@ -67,21 +73,33 @@ def raman(file_name):
     if len(intensities) == 0:
         raise TypeError('The Gaussian job does not look like conntaining normal IR information')
             
-    frequencies = np.array(frequencies, dtype='float').flatten()
-    frequencies = np.rint(frequencies)
-    intensities = np.array(intensities, dtype='float').flatten()
+    frequencies = np.array(frequencies, dtype='float').flatten() #cm-1
+    intensities = np.array(intensities, dtype='float').flatten() 
 
     return frequencies, intensities
+
+h = 6.6261e-34 # J/s
+c = 299792458  # m/s
+J2eV = 6.02214076e23/96.48530749925793/1000
+
+def wvl2E(wvl): # wvl in nm
+    E = h*c/(wvl/1e9)*J2eV
+    return E # E in eV
+
+def E2wvl(E): #E in eV
+    wvl = h*c*1e9/(E/J2eV)
+    return wvl # wvl in nm
 
 def uvGauss(x, f, wv):
     #Gaussian distribution for UV-Vis
     #Reference: https://gaussian.com/uvvisplot/
-    return 13.062973*f*3099.6*m.exp(-((1/x-1/wv)/0.00032262)**2)
+#    return 13.062973*f*3099.6*m.exp(-((1/x-1/wv)/0.00032262)**2)
+    return 13.062973*f*E2wvl(m.sqrt(2)*uv_delta)*m.exp(-((wvl2E(x)-wvl2E(wv)/uv_alpha)/uv_delta/m.sqrt(2))**2)
 
-def cauchy(x, i, mu):
+def cauchy(x, mu):
     # Cauchy distribution for normal and raman IR
-    gamma = 3
-    return i/m.pi/gamma/(1+((x-mu)/gamma)**2)
+    gamma = IR_HWHM
+    return 1/m.pi/gamma/(1+((x-mu)/gamma)**2)
 
 def main():
     # Print error/help messages that looks like argparse functionality
@@ -165,7 +183,7 @@ def main():
         f.set_figwidth(12)
         f.set_figheight(8)
         
-        xrange = np.linspace(100,500,401)
+        xrange = UV_wl_range
         curve_per_file = []
         
         for fn in file_name:
@@ -231,21 +249,21 @@ def main():
         f.set_figwidth(12)
         f.set_figheight(8)
         
-        xrange = np.linspace(0,3900,3901)
+        xrange = IR_wv_range * IR_wn_factor # Correction factor
         curve_per_file = []
         
         for fn in file_name:
             if type_name == 'ir':
                 frequencies, intensities = ir(fn)
+                frequencies *= IR_wn_factor # Correction factor
+                intensities *= 1e5/2.24e3
             elif type_name == 'raman':
                 frequencies, intensities = raman(fn)
                 
             curve_per_x = []
             for idx, mu in enumerate(frequencies):
                 mu_array = np.ones(len(xrange))*mu
-                it_array = np.ones(len(xrange)) * intensities[idx]
-                
-                curve = np.array(list(map(cauchy,xrange,it_array,mu_array)))
+                curve = np.array(list(map(cauchy,xrange,mu_array)))
                 curve_per_x.append(curve)
             
             final_curve = np.sum(curve_per_x, axis=0)
