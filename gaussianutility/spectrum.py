@@ -255,7 +255,7 @@ def main():
         f.set_figwidth(12)
         f.set_figheight(8)
         
-        xrange = IR_wv_range * IR_wn_factor # Correction factor
+        xrange = IR_wv_range
         curve_per_file = []
         
         for fn in file_name:
