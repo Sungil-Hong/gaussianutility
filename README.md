@@ -70,8 +70,8 @@ The Gaussian Utility package has the following dependencies:
 - periodictable>=1.6.1
 - ase
 - argparse>=1.1
-- matplotlib>=3.5.3
-- mendeleev>=0.12.0
+- matplotlib>=3.5.1
+- mendeleev>=0.9.0
 
 These dependencies will be automatically installed when you install the package using `setuptools`.
 
@@ -118,6 +118,20 @@ Here are some examples of how to use the utilities:
     ```
     sortInput [-s [sort index]] [-o [order index]] file_name
     ```
+## Test
+In the test folder, you'll find files for testing each command with the naming convention "command_structure.extension". For example, to test the "com2vasp" command, follow these steps:
+1. Navigate to the test directory:
+
+```
+cd test
+```
+
+2. Run the desired command with the corresponding test file. For example, to test the "com2vasp" command with the file "com2vasp_ZSM5.com", use the following command:
+```
+com2vasp com2vasp_ZSM5.com
+```
+
+3. Verify that the command executes as expected and produces the correct output.
 
 ## Authors
 
