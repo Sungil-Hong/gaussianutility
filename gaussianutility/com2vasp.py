@@ -10,17 +10,13 @@ from gaussianutility.utilities import readinput
 def parse_args():
     parser = argparse.ArgumentParser(
         description= "Convert Gaussian input file to .vasp file\n\n"
-                     "Return file_name.vasp: VASP geometry file (POSCAR)"
-                     , formatter_class=RawTextHelpFormatter)
+                     "Return file_name.vasp: VASP geometry file (POSCAR)",
+        formatter_class=RawTextHelpFormatter)
 
     parser.add_argument("file_name", help='Gaussian input file (.com or .gjf)')
-    args = parser.parse_args()
-    return args
+    return parser.parse_args()
 
-def main():
-    args = parse_args()
-    file_name = args.file_name
-
+def com_2_vasp():
     # Read geometry from a Gaussian input file
     _, _, _, df_geom, _ = readinput(file_name)
     df_geom = df_geom[['Atom', 'x', 'y', 'z']]
@@ -29,17 +25,13 @@ def main():
         raise ValueError('The Gaussian input file does not contain lattice information')
 
     # Convert Gaussian input to VASP input
-    elem = []
-    for el in elements:
-        elem.append(el.symbol)
-     
+    elem = [el.symbol for el in elements]
     df_atom_sort = pd.DataFrame(elem[1:], columns = ['symbol'])
     atom_sort_mapping = df_atom_sort.reset_index().set_index('symbol')
     df_geom['Atomic_num'] = df_geom['Atom'].map(atom_sort_mapping['index'])
 
     df_geom = df_geom.sort_values(by=['Atomic_num'], ascending = 0)
     df_geom = df_geom.drop(columns=['Atomic_num'])
-
 
     # Read lattice information
     lattice = df_geom[-3:].drop(['Atom'], axis=1) 
@@ -64,15 +56,22 @@ def main():
     # Write VASP input file
     name = ".".join(file_name.rsplit(".",1)[0:-1])
     out_file = name + ".vasp"
-    output = open(out_file, 'w')
-    output.write(name+'\n')
-    output.write('1.0\n')
-    output.write(lattice.to_csv(index=False, header=False, sep='\t'))
-    output.write('   '+' '.join(uniqatomlist)+'\n')
-    output.write('   '+' '.join(uniqatomcount)+'\n')
-    output.write('Cartesian\n')
-    output.write(coord.to_csv(index=False, header=False, sep='\t'))
-    output.write('\n')
-    output.close()
+    with open(out_file, 'w') as output:
+        output.write(name + '\n')
+        output.write('1.0\n')
+        output.write(lattice.to_csv(index=False, header=False, sep='\t'))
+        output.write('   '+' '.join(uniqatomlist)+'\n')
+        output.write('   '+' '.join(uniqatomcount)+'\n')
+        output.write('Cartesian\n')
+        output.write(coord.to_csv(index=False, header=False, sep='\t'))
+        output.write('\n')
+
+def main():
+    args = parse_args()
+    file_name = args.file_name
+    com_2_vasp(file_name)
+
+if __name__ == "__main__":
+    main()
 
 
