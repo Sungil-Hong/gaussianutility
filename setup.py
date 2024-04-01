@@ -36,6 +36,6 @@ setuptools.setup(
                       'periodictable>=1.6.1',
                       'ase',
                       'argparse>=1.1',
-                      'matplotlib>=3.5.3',
-                      'mendeleev>=0.12.0']
+                      'matplotlib>=3.5.1',
+                      'mendeleev>=0.9.0']
 )
