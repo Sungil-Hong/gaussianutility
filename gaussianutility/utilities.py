@@ -19,16 +19,13 @@ def readinput(file_name):
     Geometry is a pandas dataframe and all the others are strings
     """
     # Check input file
-    name = file_name.rsplit(".",1)[0]
-    input_format = file_name.rsplit(".",1)[-1]
-
-    if input_format != 'com' and input_format != 'gjf':
+    name, input_format = file_name.rsplit(".", 1)
+    if input_format not in ('com', 'gjf'):
         raise TypeError('The input file format must be .com or .gjf')
 
     # Find the elements of the Gaussian input file
-    inputfile = open(file_name,'r')
-    lines = inputfile.readlines()
-    inputfile.close()
+    with open(file_name, 'r') as inputfile:
+        lines = inputfile.readlines()
 
     # Route section
     for idx, line in enumerate(lines):
@@ -42,9 +39,7 @@ def readinput(file_name):
         route += lines[idx_route+1]
         idx_route += 1
 
-    connectIdx = False
-    if "geom=connectivity" in route:
-        connectIdx = True
+    connectIdx = "geom=connectivity" in route
             
     # Title and charge/multiplicity
     title = lines[idx_route+2]
