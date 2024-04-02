@@ -32,6 +32,11 @@ def com_2_xyz(file_name):
 
 def main():
     args = parse_args()
+    file_name = args.file_name
+
+    if not (file_name.endswith(".com") or file_name.endswith(".gjf")):
+        raise ValueError('The input structure must be a gaussian input file (.com or .gjf)')
+    
     com_2_xyz(args.file_name)
 
 if __name__ == "__main__":
