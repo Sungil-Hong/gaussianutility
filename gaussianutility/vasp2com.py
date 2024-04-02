@@ -17,7 +17,7 @@ def parse_args():
     parser.add_argument("file_name", help='VASP input file (.vasp)')
     return parser.parse_args()
 
-def vasp_2_com(file_name, multiplicity, df_geom, lattice_vector):
+def vasp_2_com(file_name):
     # Read geometry information and make Pandas dataframe
     lines = open(file_name).readlines()
 
@@ -51,9 +51,10 @@ def vasp_2_com(file_name, multiplicity, df_geom, lattice_vector):
         output.write(f'{file_name.rsplit(".", 1)[0]}\n\n')
         output.write(f'0 {multiplicity}\n')
         output.write(df_geom.to_string(index=False, header=False) + '\n')
-        output.write(f'Tv {lattice_vector[0]}\n')
-        output.write(f'Tv {lattice_vector[1]}\n')
-        output.write(f'Tv {lattice_vector[2]}\n\n')
+        output.write('Tv ' + lines[2])
+        output.write('Tv ' + lines[3])
+        output.write('Tv ' + lines[4])
+        output.write('\n')
 
 def main():
     args = parse_args()
@@ -62,7 +63,7 @@ def main():
     if not file_name.endswith(".vasp"):
         raise ValueError('The input structure must be a .vasp file')
 
-    multiplicity, df_geom, lattice_vector = vasp_2_com(file_name, multiplicity, df_geom, lattice_vector)
+    vasp_2_com(file_name)
 
 if __name__ == "__main__":
     main()
