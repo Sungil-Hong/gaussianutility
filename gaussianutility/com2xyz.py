@@ -9,17 +9,13 @@ from gaussianutility.utilities import readinput
 def parse_args():
     parser = argparse.ArgumentParser(
         description= "Convert Gaussian input file (.com or .gjf) to xyz file\n\n"
-                     "Return file_name.xyz: xyz structure file"
-                     , formatter_class=RawTextHelpFormatter)
+                     "Return file_name.xyz: xyz structure file",
+        formatter_class=RawTextHelpFormatter)
 
     parser.add_argument("file_name", help='Gaussian input file (.com or .gjf)')
-    args = parser.parse_args()
-    return args
+    return parser.parse_args()
     
-def main():
-    args = parse_args()
-    file_name = args.file_name
-
+def com_2_xyz(file_name):
     # Read geometry from a Gaussian input file
     _, _, _, df_geom, _ = readinput(file_name)
     df_geom = df_geom[['Atom', 'x', 'y', 'z']]
@@ -29,11 +25,15 @@ def main():
     # Write xyz file
     name = ".".join(file_name.rsplit(".",1)[0:-1])
     out_file = name + ".xyz"
-    output = open(out_file, 'w')
-    output.write(elem_len + '\n')
-    output.write(out_file + '\n')
-    output.write(df_geom.to_string(index=False, header=False))
-    output.write('\n')
-    output.close()
+    with open(out_file, 'w') as output:
+        output.write(elem_len + '\n')
+        output.write(out_file + '\n')
+        output.write(df_geom.to_string(index=False, header=False) + '\n')
 
+def main():
+    args = parse_args()
+    com_2_xyz(args.file_name)
+
+if __name__ == "__main__":
+    main()
 
