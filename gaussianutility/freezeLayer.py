@@ -16,7 +16,7 @@ def parse_args():
     parser.add_argument("file_name", help='Gaussian input file (.com or .gjf)')
     parser.add_argument('-i', '--index', nargs='?', const=1, \
     help="'H', 'M', or 'L' for freezing a high, medium, or low ONIOM layer, or their combination\n"+\
-         "'L' is default", default='L')
+         "'U' unfreezes all the atoms. 'L' is default", default='L')
     args = parser.parse_args()
     return args
     
@@ -28,34 +28,39 @@ def main():
     # Read a Gaussian input file
     route, title, charge_mult, df_geom, connectivity = readinput(file_name)
 
-    if ("oniom" or "ONIOM" or "Oniom") not in route:
+    if "oniom" not in route.lower():
         raise TypeError("Input structure must be in ONIOM scheme")
         
-    if "Index" in list(df_geom.columns):
-        df_geom["Index"] = np.zeros(len(df_geom), dtype = int)
-        
-    if "Index" not in list(df_geom.columns):
-        initIdx = np.zeros(len(df_geom), dtype = int)
-        df_geom.insert(1, "Index", initIdx)
+    if "Index" in df_geom.columns:
+        df_geom["Index"] = 0
+    else:
+        df_geom.insert(1, "Index", 0)
+
         
     # Read index for freezing
     freezeIdx = list(freezeIdx)    
-    for idx in freezeIdx:
-        if idx not in ['H', 'M', 'L']:
-            raise ValueError("Index for layer to freeze must be H, M, L or their combination")
-            
-    # Add indicies to freeze atoms
-    for layer in freezeIdx:
-        df_geom.loc[df_geom["ONIOM_layer"] == layer, "Index"] = -1
-        
+    if 'U' in freezeIdx:
+        if len(freezeIdx) > 1:
+            raise ValueError("U cannot be combined with other layer indices.")
+
+    else:
+        for layer in freezeIdx:
+            if layer not in ['H', 'M', 'L']:
+                raise ValueError("Layer index must be H, M, L, their combination, or U")
+                        
+            df_geom.loc[df_geom["ONIOM_layer"] == layer, "Index"] = -1
+
     # Write Gaussian input file
-    outfile = open(file_name, 'w')
-    outfile.write(route + '\n')
-    outfile.write(title + '\n')
-    outfile.write(charge_mult)
-    outfile.write(df_geom.to_string(index=False, header=False))
-    outfile.write('\n\n')
-    outfile.writelines(connectivity)
-    outfile.write('\n')
-    outfile.close()
+    with open(file_name, 'w') as output:
+        output.write(f"{route}\n")
+        output.write(f"{title}\n")
+        output.write(charge_mult)
+        output.write(df_geom.to_csv(index=False, header=False, sep='\t'))
+        output.write('\n\n')
+        output.writelines(connectivity)
+        output.write('\n')
+
+if __name__ == "__main__":
+    main()
+    
 

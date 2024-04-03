@@ -35,7 +35,7 @@ def main():
         output.write(f"{routeStr}\n\n")
         output.write(f"{out_file}\n\n")
         output.write(f"{charge_mult}\n")
-        output.write(df_geom.to_string(index=False, header=False))
+        output.write(df_geom.to_csv(index=False, header=False, sep='\t'))
         output.write("\n\n")
 
 if __name__ == "__main__":
