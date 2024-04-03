@@ -16,7 +16,7 @@ def parse_args():
     parser.add_argument("file_name", help='Gaussian input file (.com or .gjf)')
     parser.add_argument('-i', '--index', nargs='?', const=1, \
     help="'H', 'M', or 'L' for freezing a high, medium, or low ONIOM layer, or their combination\n"+\
-         "'L' is default", default='L')
+         "'U' unfreezes all the atoms. 'L' is default", default='L')
     args = parser.parse_args()
     return args
     
@@ -33,20 +33,23 @@ def main():
         
     if "Index" in df_geom.columns:
         df_geom["Index"] = 0
-        
-    if "Index" not in df_geom.columns:
+    else:
         df_geom.insert(1, "Index", 0)
+
         
     # Read index for freezing
     freezeIdx = list(freezeIdx)    
-    for idx in freezeIdx:
-        if idx not in ['H', 'M', 'L']:
-            raise ValueError("Index for layer to freeze must be H, M, L or their combination")
-            
-    # Add indicies to freeze atoms
-    for layer in freezeIdx:
-        df_geom.loc[df_geom["ONIOM_layer"] == layer, "Index"] = -1
-        
+    if 'U' in freezeIdx:
+        if len(freezeIdx) > 1:
+            raise ValueError("U cannot be combined with other layer indices.")
+
+    else:
+        for layer in freezeIdx:
+            if layer not in ['H', 'M', 'L']:
+                raise ValueError("Layer index must be H, M, L, their combination, or U")
+                        
+            df_geom.loc[df_geom["ONIOM_layer"] == layer, "Index"] = -1
+
     # Write Gaussian input file
     with open(file_name, 'w') as output:
         output.write(f"{route}\n")
