@@ -10,8 +10,8 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description= "Freeze a given ONIOM layer(s) in a Gaussian input structure during\n"
                      "optimization calculation by adding indices (-1) next to atom symbols\n\n"
-                     "Return file_name.com: Modified input structure"
-                     , formatter_class=RawTextHelpFormatter)
+                     "Return file_name.com: Modified input structure",
+        formatter_class=RawTextHelpFormatter)
 
     parser.add_argument("file_name", help='Gaussian input file (.com or .gjf)')
     parser.add_argument('-i', '--index', nargs='?', const=1, \
@@ -20,11 +20,7 @@ def parse_args():
     args = parser.parse_args()
     return args
     
-def main():
-    args = parse_args()
-    file_name = args.file_name
-    freezeIdx = args.index
-
+def freeze_layer(file_name, index):
     # Read a Gaussian input file
     route, title, charge_mult, df_geom, connectivity = readinput(file_name)
 
@@ -35,7 +31,6 @@ def main():
         df_geom["Index"] = 0
     else:
         df_geom.insert(1, "Index", 0)
-
         
     # Read index for freezing
     freezeIdx = list(freezeIdx)    
@@ -59,6 +54,10 @@ def main():
         output.write('\n\n')
         output.writelines(connectivity)
         output.write('\n')
+
+def main():
+    args = parse_args()
+    freeze_layer(args.file_name, args.index)
 
 if __name__ == "__main__":
     main()
