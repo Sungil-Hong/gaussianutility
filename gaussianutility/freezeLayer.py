@@ -28,15 +28,14 @@ def main():
     # Read a Gaussian input file
     route, title, charge_mult, df_geom, connectivity = readinput(file_name)
 
-    if ("oniom" or "ONIOM" or "Oniom") not in route:
+    if "oniom" not in route.lower():
         raise TypeError("Input structure must be in ONIOM scheme")
         
-    if "Index" in list(df_geom.columns):
-        df_geom["Index"] = np.zeros(len(df_geom), dtype = int)
+    if "Index" in df_geom.columns:
+        df_geom["Index"] = 0
         
-    if "Index" not in list(df_geom.columns):
-        initIdx = np.zeros(len(df_geom), dtype = int)
-        df_geom.insert(1, "Index", initIdx)
+    if "Index" not in df_geom.columns:
+        df_geom.insert(1, "Index", 0)
         
     # Read index for freezing
     freezeIdx = list(freezeIdx)    
@@ -49,13 +48,16 @@ def main():
         df_geom.loc[df_geom["ONIOM_layer"] == layer, "Index"] = -1
         
     # Write Gaussian input file
-    outfile = open(file_name, 'w')
-    outfile.write(route + '\n')
-    outfile.write(title + '\n')
-    outfile.write(charge_mult)
-    outfile.write(df_geom.to_string(index=False, header=False))
-    outfile.write('\n\n')
-    outfile.writelines(connectivity)
-    outfile.write('\n')
-    outfile.close()
+    with open(file_name, 'w') as output:
+        output.write(f"{route}\n")
+        output.write(f"{title}\n")
+        output.write(charge_mult)
+        output.write(df_geom.to_csv(index=False, header=False, sep='\t'))
+        output.write('\n\n')
+        output.writelines(connectivity)
+        output.write('\n')
+
+if __name__ == "__main__":
+    main()
+    
 
