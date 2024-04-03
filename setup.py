@@ -18,7 +18,6 @@ setuptools.setup(
                   'freezeLayer = gaussianutility.freezeLayer:main',
                   'gibbsTemp = gaussianutility.gibbsTemp:main',
                   'out2com = gaussianutility.out2com:main',
-                  'out2xyz = gaussianutility.out2xyz:main',
                   'printE = gaussianutility.printE:main',
                   'sortInput = gaussianutility.sortInput:main',
                   'spectrum = gaussianutility.spectrum:main',
