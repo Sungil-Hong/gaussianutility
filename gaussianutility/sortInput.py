@@ -13,8 +13,8 @@ def parse_args():
                      "or ONIOM layer from low to high in the Gaussian input file (.com or .gjf)\n"
                      "Sorting by an atomic number is defualt"
                      "Sorting in ascending order is default\n\n"
-                     "Return file_name.com: Gaussian input file with a sorted geometry"
-                     , formatter_class=RawTextHelpFormatter)
+                     "Return file_name.com: Gaussian input file with a sorted geometry",
+        formatter_class=RawTextHelpFormatter)
 
     parser.add_argument('file_name', help='Gaussian input file (.com or .gjf)')
     parser.add_argument('-s', '--sort', nargs='?', const=1, \
@@ -35,19 +35,12 @@ def parse_args():
     args = parser.parse_args()
     return args
     
-def main():
-    args = parse_args()
-    file_name = args.file_name
-    sortIdx = args.sort
-    orderIdx = args.order
-
+def sort_input(file_name, sortIdx, orderIdx):
     # Read a Gaussian input file
     route, title, charge_mult, df_geom, connectivity = readinput(file_name)
 
-    oniomIdx = False
-    if ("oniom" or "ONIOM" or "Oniom") in route:
-        oniomIdx = True
-        
+    oniomIdx = "oniom" in route.lower()
+    
     # Check sorting and ordering indecies
     sortOptions = ['x', 'y', 'z', 'A', 'L', 'xL', 'Lx', 'yL', 'Ly', 'zL',\
     'Lz', 'AL', 'LA']
@@ -57,29 +50,35 @@ def main():
 
     sortIdx = list(sortIdx)
 
-    if oniomIdx == False and 'L' in sortIdx:
-        sortIdx.remove('L')
-        if len(sortIdx) == 0:
-            raise ValueError("The provided input structure does not have ONIOM partitions")
+    if not oniomIdx and 'L' in sortIdx:
+        raise ValueError("The provided input structure does not have ONIOM partitions")
         
-    if orderIdx not in ['a', 'r']:
+    if orderIdx not in ('a', 'r'):
         raise ValueError("Order index must be 'a for ascending or r for reversed (descending) order")
         
-    # Sort elements
-    if oniomIdx == True and 'L' in sortIdx:
+    # Set ordering index
+    if len(sortIdx) == 1:
+        if orderIdx == 'a': orderIdx = [1]
+        elif orderIdx == 'r': orderIdx = [0]
+        
+    elif len(sortIdx) == 2:
+        if orderIdx == 'a': orderIdx = [1, 1]
+        elif orderIdx == 'r': orderIdx = [1, 0]
+
+    # Sorting atoms
+    ## Sorting based on the ONIOM layer first
+    if oniomIdx and 'L' in sortIdx:
         df_layer_sort = pd.DataFrame({'ONIOM_layer': ['L', 'M', 'H']})
         layer_sort_mapping = df_layer_sort.reset_index().set_index('ONIOM_layer')
         df_geom['ONIOM_layer_num'] = df_geom['ONIOM_layer'].map(layer_sort_mapping['index'])
+    
+    ## If sorting only based on the ONION later
+    if sortIdx == ['L']:
+        df_geom = df_geom.sort_values(by=['ONIOM_layer_num'], ascending = orderIdx)
+        df_geom = df_geom.drop(columns=['ONIOM_layer_num'])
 
-    if len(sortIdx) == 1:
-        if orderIdx == "a": orderIdx = [1]
-        elif orderIdx == "r": orderIdx = [0]
-        
-    elif len(sortIdx) == 2:
-        if orderIdx == "a": orderIdx = [1, 1]
-        elif orderIdx == "r": orderIdx = [1, 0]
-
-    if 'A' in sortIdx:
+    ## If sorting based on the atomic number
+    elif 'A' in sortIdx:
         elem = np.array([[el.symbol, el.number] for el in elements])
         elem = {elem[i,0]: int(elem[i,1]) for i in range(len(elem))}
         df_geom['Atomic_num'] = [elem[atomSb] for atomSb in np.array(df_geom['Atom'])]
@@ -91,6 +90,7 @@ def main():
             df_geom = df_geom.sort_values(by=['Atomic_num'], ascending = orderIdx)
             df_geom = df_geom.drop(columns=['Atomic_num'])
             
+    ## If sorting based on the cartesian coordinate
     else:
         if 'x' in sortIdx: sortCoord = 'x'
         elif 'y' in sortIdx: sortCoord = 'y'
@@ -103,7 +103,6 @@ def main():
             df_geom = df_geom.drop(columns=['ONIOM_layer_num'])
         else:
             df_geom = df_geom.sort_values(by=sortCoord, ascending = orderIdx)
-           
             
         df_geom[sortCoord] = ["{:.8f}".format(val) for val in df_geom[sortCoord]]
 
@@ -148,7 +147,6 @@ def main():
             newConnect.append([str(elem)])
                 
         newConnect = sorted(newConnect, key=lambda x:int(x[0]))
-
         newConnectSorted = []
 
         for i in range(len(df_geom)):
@@ -173,15 +171,21 @@ def main():
                 newConnectSorted.append(sublist[0])
 
     # Write Gaussian input file
-    outfile = open(file_name, 'w')
-    outfile.write(route + '\n')
-    outfile.write(title + '\n')
-    outfile.write(charge_mult)
-    outfile.write(df_geom.to_string(index=False, header=False))
-    outfile.write('\n\n')
-    if 'newConnectSorted' in locals():
-        for line in newConnectSorted:
-            outfile.write(' '.join(line) + '\n')
-        outfile.write('\n')
-    outfile.close()
+    with open(file_name, 'w') as output:
+        output.write(f"{route}\n")
+        output.write(f"{title}\n")
+        output.write(charge_mult)
+        output.write(df_geom.to_csv(index=False, header=False, sep='\t'))
+        output.write('\n\n')
+        if 'newConnectSorted' in locals():
+            for line in newConnectSorted:
+                output.write(' '.join(line) + '\n')
+            output.write('\n')
 
+def main():
+    args = parse_args()
+    sort_input(args.file_name, args.sort, args.order)
+
+if __name__ == "__main__":
+    main()
+    
