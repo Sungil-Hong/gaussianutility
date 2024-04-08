@@ -20,34 +20,48 @@ def parse_args():
     args = parser.parse_args()
     return args
     
+def print_E(file_path):
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+
+    stoich, E, EZPE, H, G, imagf = '', '', '', '', '', ''
+
+    for line in lines:
+        if "Stoichiometry" in line: 
+            stoich = line.split()[1]
+            break
+    
+    for idx, line in reversed(list(enumerate(lines))):
+        if "SCF Done" in line: 
+            E = line.split()[4]
+            break
+        
+    for line in lines[len(lines)-idx:]:
+        if "zero-point Energies" in line: EZPE = line.split()[6]
+        if "thermal Enthalpies" in line: H = line.split()[6]
+        if "thermal Free Energies" in line: G = line.split()[7]
+        if "imaginary frequencies ignored" in line: imagf = line.split()[0]
+        else: imagf = '0'
+    
+    return {
+        'file_name': file_path.rsplit("/",1)[-1].rsplit(".",1)[0],
+        'stoich': stoich,
+        'E': E,
+        'EZPE': EZPE,
+        'H': H,
+        'G': G,
+        'imagf': imagf
+    }
+
 def main():
     args = parse_args()
-    file_name = args.file_name
+    file_names = args.file_name
 
-    #file_name = sys.argv[1:]
-    for file in file_name:
-        inputfile = open(file)
-        lines = inputfile.readlines()
-        inputfile.close()
+    for file_name in file_names:
+        result = print_E(file_name)
+        print(f"{result['file_name']}  {result['stoich']}  {result['E']}  {result['EZPE']}  "
+              f"{result['H']}  {result['G']}  {result['imagf']}")
 
-        E, EZPE, H, G, imagf = '', '', '', '', ''
-
-        for line in lines:
-            if "Stoichiometry" in line: 
-                stoich = line.split()[1]
-                break
+if __name__ == '__main__':
+    main()
         
-        for idx, line in reversed(list(enumerate(lines))):
-            if "SCF Done" in line: 
-                E = line.split()[4]
-                break
-            
-        for line in lines[len(lines)-idx:]:
-            if "zero-point Energies" in line: EZPE = line.split()[6]
-            if "thermal Enthalpies" in line: H = line.split()[6]
-            if "thermal Free Energies" in line: G = line.split()[7]
-            if "imaginary frequencies ignored" in line: imagf = line.split()[0]
-        
-        print(file.rsplit("/",1)[-1].rsplit(".",1)[0] + "  " + str(stoich) + "  " + str(E) + "  " + str(EZPE)\
-        + "  " + str(H) + "  " + str(G)+ "  "  + str(imagf))
-
