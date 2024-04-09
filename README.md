@@ -98,7 +98,7 @@ Here are some examples of how to use the utilities:
 
 3. Produce a spectrum from a Gaussian output file:
    ```
-   spectrum type file_name1 [ratio1 [file_name2 ratio2 ...]]
+   spectrum type file_name1 [file_name2 ... [-r ratio1 ratio2 ...]]
    ```
 
 4. Freeze a specific ONIOM layer of atoms in a Gaussian input file:
