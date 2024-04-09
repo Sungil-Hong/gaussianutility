@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "gaussianutility"
-version = "0.1.3"
-authors = [{name="Sungil Hong", email="suh33@pitt.edu"}]
+version = "0.1.4"
+authors = [{name="Sungil Hong", email="s.hong@pitt.edu"}]
 description = "Useful utilities to use Gaussian09/16 software"
 readme = "README.md"
 requires-python = ">=3.6"
