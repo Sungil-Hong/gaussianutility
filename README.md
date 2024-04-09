@@ -6,6 +6,8 @@
 [![Contributors Badge](https://img.shields.io/github/contributors/Sungil-Hong/gaussianutility)](https://github.com/loevlie/GPT4Readability/graphs/contributors)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
 
+![Logo](GaussianUtility_Logo.png)
+
 The Gaussian Utility is a Python package that provides useful utilities for working with Gaussian 09/16 software. 
 
 Gaussian is a computer program used by chemists, chemical engineers, biochemists, physicists, and other scientists for performing quantum chemistry calculations.
