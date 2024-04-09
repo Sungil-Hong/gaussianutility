@@ -3,6 +3,7 @@
 import numpy as np
 import math as m
 import sys
+import argparse
 from argparse import RawTextHelpFormatter
 
 # Thermodynamic constants
@@ -13,18 +14,17 @@ Na = 6.02214076e23
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description= "Calculated Gibbs free energy (G) at different tempeature(s) from Gaussian output file (.out)\n"
-                     "The Gaussian job must be normally terminated with frequency calculation\n"
-                     "Print the following values on terminal:\n"
-                     "   Single G, if only Temp1. is provided\n"
-                     "   List of 20 G valuse between Temp1 and Temp2 if both are provided"
-                     "   List of G values as many as step_number if Temp1, Temp2, and step_number are provided",
+        description= """
+        Calculate Gibbs free energy (in Hartrees) at different tempeature(s) from Gaussian output file (.out)
+        The Gaussian job must be normally terminated with frequency calculation
+        Print temperatures and Gibbs free energies on terminal.
+        """,
         formatter_class=RawTextHelpFormatter)
 
     parser.add_argument('file_name', help='Gaussian output file (.out)')
-    parser.add_argument('T1', type=float, help='Temperature in K to calculate G (T1)')
-    parser.add_argument('T2', type=float, nargs='?', help='Upper bound of temperature range (T2)')
-    parser.add_argument('step_number', type=int, nargs='?', default=20, help='Number of steps to calculate G', default=20)
+    parser.add_argument('T1', type=float, help='Temperature to calculate G (in K)')
+    parser.add_argument('T2', type=float, nargs='?', help='Upper bound of temperature range (in K)')
+    parser.add_argument('step_number', type=int, nargs='?', help="Number of steps of temperature between T1 and T2 to calculate G", default=20)
     args = parser.parse_args()
     return args
     
@@ -72,7 +72,7 @@ def gibbs_temp(file_name, T1, T2, step_number):
     if T2:
         temperature = np.linspace(T1, T2, step_number)
     else:
-        temperature = np.array(T1)
+        temperature = np.array([T1])
 
     # Exctract thermochemistry result from the output file
     with open(file_name, 'r') as inFile:
