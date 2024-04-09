@@ -19,16 +19,13 @@ def readinput(file_name):
     Geometry is a pandas dataframe and all the others are strings
     """
     # Check input file
-    name = file_name.rsplit(".",1)[0]
-    input_format = file_name.rsplit(".",1)[-1]
-
-    if input_format != 'com' and input_format != 'gjf':
+    name, input_format = file_name.rsplit(".", 1)
+    if input_format not in ('com', 'gjf'):
         raise TypeError('The input file format must be .com or .gjf')
 
     # Find the elements of the Gaussian input file
-    inputfile = open(file_name,'r')
-    lines = inputfile.readlines()
-    inputfile.close()
+    with open(file_name, 'r') as inputfile:
+        lines = inputfile.readlines()
 
     # Route section
     for idx, line in enumerate(lines):
@@ -42,9 +39,7 @@ def readinput(file_name):
         route += lines[idx_route+1]
         idx_route += 1
 
-    connectIdx = False
-    if "geom=connectivity" in route:
-        connectIdx = True
+    connectIdx = "geom=connectivity" in route
             
     # Title and charge/multiplicity
     title = lines[idx_route+2]
@@ -71,7 +66,7 @@ def readinput(file_name):
             if line.startswith(str(len(geom))) or line.startswith(" "+str(len(geom))):
                 break
 
-    if ("oniom" or "ONIOM" or "Oniom") in route: 
+    if any(keyword in route.lower() for keyword in ["oniom"]):
         lineLen = 0
         for line in geom:
             if len(line) > lineLen: lineLen = len(line)
@@ -127,18 +122,15 @@ def readoutput(file_name, stepIdx = -1):
     Geometry is a pandas dataframe and all the others are strings
     """
     # Check input file
-    name = file_name.rsplit(".",1)[0]
-    input_format = file_name.rsplit(".",1)[-1]
-
+    name, input_format = file_name.rsplit(".", 1)
     if input_format != 'out':
         raise TypeError('The input file format must be .out')
 
-    # Find the elements of the Gaussian output file
-    inputfile = open(file_name,'r')
-    lines = inputfile.readlines()
-    inputfile.close()
+    # Read file
+    with open(file_name, 'r') as inputfile:
+        lines = inputfile.readlines()
 
-    # Read computational chemistry method and make changes
+    # Read computational chemistry method and remove unnecessary keywords 
     for idx, line in enumerate(lines):
         if "#" in line:
             idx_route = idx
@@ -157,18 +149,15 @@ def readoutput(file_name, stepIdx = -1):
 
     routeStr = ""
     routeStr = routeStr.join(route)
+    
     if 'qst' in routeStr:
-        routeStr = routeStr.replace('=qst3','')
-        routeStr = routeStr.replace('=qst2','')
-        routeStr = routeStr.replace('qst3,','')
-        routeStr = routeStr.replace('qst2,','')
+        routeStr = routeStr.replace('=qst3', '').replace('qst3', '')
+        routeStr = routeStr.replace('=qst2', '').replace('qst2', '')
 
     if "geom=connectivity" in routeStr:
         routeStr = routeStr.replace("geom=connectivity","")
 
-    oniom = False
-    if any(word in routeStr for word in ["oniom","ONIOM","Oniom"]):
-        oniom = True
+    oniom = any(word in routeStr.lower() for word in ["oniom"])
 
     # Read charge and multiplicity information
     for idx, line in enumerate(lines):

@@ -6,6 +6,8 @@
 [![Contributors Badge](https://img.shields.io/github/contributors/Sungil-Hong/gaussianutility)](https://github.com/loevlie/GPT4Readability/graphs/contributors)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
 
+![Logo](GaussianUtility_Logo.png)
+
 The Gaussian Utility is a Python package that provides useful utilities for working with Gaussian 09/16 software. 
 
 Gaussian is a computer program used by chemists, chemical engineers, biochemists, physicists, and other scientists for performing quantum chemistry calculations.
@@ -96,7 +98,7 @@ Here are some examples of how to use the utilities:
 
 3. Produce a spectrum from a Gaussian output file:
    ```
-   spectrum type file_name1 [ratio1 [file_name2 ratio2 ...]]
+   spectrum type file_name1 [file_name2 ... [-r ratio1 ratio2 ...]]
    ```
 
 4. Freeze a specific ONIOM layer of atoms in a Gaussian input file:

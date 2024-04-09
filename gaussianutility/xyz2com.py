@@ -8,56 +8,53 @@ import mendeleev as md
 def parse_args():
     parser = argparse.ArgumentParser(
         description= "Convert xyz file to Gaussian input file (.com)\n\n"
-                     "Return file_name.com: Gaussian input file"
-                     , formatter_class=RawTextHelpFormatter)
+                     "Return file_name.com: Gaussian input file",
+        formatter_class=RawTextHelpFormatter)
 
     parser.add_argument("file_name", help='XYZ structure file (.xyz)')
-    args = parser.parse_args()
-    return args
+    return parser.parse_args()
+
+def xyz_2_com(file_name):
+    # Read geometry from XYZ file
+    lines = open(file_name).readlines()
+
+    # Find the line where the XYZ coordinates start
+    for idx, line in enumerate(lines[:]):
+        if len(line.split()) == 4:
+            try:
+                _ = [float(val.replace('n','')) for val in line.split()[1:]]
+                break
+            except ValueError:
+                continue
+
+    # Decide multiplicity assuming overall neutral charge
+    elemt_list = [line.split()[0] for line in lines[idx:]]
+    elemt_type, elemt_count = np.unique(elemt_list, return_counts=True)
+    elemt_electrons = [md.element(elemt).electrons for elemt in elemt_type]
+    total_electrons = sum(np.array(elemt_electrons) * elemt_count)
+    multiplicity = 1 if total_electrons % 2 == 0 else 2
+
+    # Write Gaussian input file
+    name = ".".join(file_name.rsplit(".",1)[0:-1])
+    out_file = name + ".com"
+    with open(out_file, 'w') as output:
+        output.write('# hf/3-21g\n\n')
+        output.write(f'{out_file}\n\n')
+        output.write(f'0 {multiplicity}\n')
+        for line in lines[idx:]:
+            output.write(line)
+        output.write('\n')
 
 def main():
     args = parse_args()
     file_name = args.file_name
 
-    # Read geometry from a Gaussian input file
-    lines = open(file_name).readlines()
+    if not file_name.endswith(".xyz"):
+        raise ValueError('The input structure must be a .xyz file')
     
-    for idx, line in enumerate(lines[:]):
-        if len(line.split()) == 4:
-            isxyz = True
-            for val in line.split()[1:]:
-                 isxyz *= val.replace('.', '', 1).isdigit()
+    xyz_2_com(file_name)
 
-            if isxyz: break
-
-    # Decide multiplicity assuming overall neutral charge
-    elemts = []
-    for line in lines[idx:]:
-        elemts.append(line.split()[0])
-        
-    elemts, counts = np.unique(elemts, return_counts=True)
-        
-    elem_elect = []
-
-    for elem in elemts:
-        elem_elect.append(md.element(elem).electrons)
-
-    total_elect = sum(np.array(elem_elect) * counts)
-
-    if total_elect%2 == 0:
-        multiplicity = 1
-    else: multiplicity = 2
-
-    # Write Gaussian input file
-    name = ".".join(file_name.rsplit(".",1)[0:-1])
-    out_file = name + ".com"
-    output = open(out_file, 'w')
-    output.write('# hf/3-21g\n\n')
-    output.write(out_file + '\n\n')
-    output.write('0 ' + str(multiplicity) + '\n')
-    for line in lines[idx:]:
-        output.write(line)
-    output.write('\n')
-    output.close()
+if __name__ == "__main__":
+    main()
 
 

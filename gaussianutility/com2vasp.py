@@ -16,7 +16,7 @@ def parse_args():
     parser.add_argument("file_name", help='Gaussian input file (.com or .gjf)')
     return parser.parse_args()
 
-def com_2_vasp():
+def com_2_vasp(file_name):
     # Read geometry from a Gaussian input file
     _, _, _, df_geom, _ = readinput(file_name)
     df_geom = df_geom[['Atom', 'x', 'y', 'z']]
@@ -68,8 +68,7 @@ def com_2_vasp():
 
 def main():
     args = parse_args()
-    file_name = args.file_name
-    com_2_vasp(file_name)
+    com_2_vasp(args.file_name)
 
 if __name__ == "__main__":
     main()

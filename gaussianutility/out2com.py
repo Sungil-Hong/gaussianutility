@@ -12,8 +12,8 @@ def parse_args():
                      "to Gaussian input file (.com)\n"
                      "This support ONIOM-type calculations\n"
                      "Connectivity information will be lost\n\n"
-                     "Return file_name_geom.com: Gaussian input file"
-                     , formatter_class=RawTextHelpFormatter)
+                     "Return file_name_geom.com: Gaussian input file",
+        formatter_class=RawTextHelpFormatter)
 
     parser.add_argument('file_name', help='Gaussian output file (.out)')
     parser.add_argument('-i', '--index', nargs='?', const=1, \
@@ -24,21 +24,20 @@ def parse_args():
     
 def main():
     args = parse_args()
-    file_name = args.file_name
-    stepIdx = args.index
+    file_name, stepIdx = args.file_name, args.index
 
     # Read Gaussian output file
     routeStr, charge_mult, df_geom = readoutput(file_name, stepIdx)
 
     # Write .com file
-    name = ".".join(file_name.rsplit(".",1)[0:-1])
-    out_file = name + "_geom.com"
-    output = open(out_file, 'w')
-    output.write(routeStr + '\n\n')
-    output.write(out_file + '\n\n')
-    output.write(charge_mult + '\n')
-    output.write(df_geom.to_string(index=False, header=False))
-    output.write('\n\n')
-    output.close()
+    out_file = file_name.rsplit(".",1)[0] + "_geom.com"
+    with open(out_file, 'w') as output:
+        output.write(f"{routeStr}\n\n")
+        output.write(f"{out_file}\n\n")
+        output.write(f"{charge_mult}\n")
+        output.write(df_geom.to_csv(index=False, header=False, sep='\t'))
+        output.write("\n\n")
 
-
+if __name__ == "__main__":
+    main()
+    
