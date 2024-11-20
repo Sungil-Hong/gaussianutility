@@ -1,19 +1,44 @@
 [build-system]
-requires = ["setuptools", "setuptools-scm"]
+requires = ["setuptools>=42", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "gaussianutility"
-version = "0.1.5"
-authors = [{name="Sungil Hong", email="s.hong@pitt.edu"}]
+version = "0.1.6"
+authors = [
+    { name="Sungil Hong", email="s.hong@pitt.edu"}
+]
 description = "Useful utilities to use Gaussian09/16 software"
 readme = "README.md"
 requires-python = ">=3.6"
+dependencies = [
+    "numpy>=1.17.2",
+    "pandas>=1.1.0",
+    "periodictable>=1.6.1",
+    "argparse>=1.1",
+    "matplotlib>=3.5.1",
+    "mendeleev>=0.9.0",
+]
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
+
+[project.scripts]
+com2vasp = "gaussianutility.com2vasp:main"
+com2xyz = "gaussianutility.com2xyz:main"
+vasp2com = "gaussianutility.vasp2com:main"
+xyz2com = "gaussianutility.xyz2com:main"
+out2com = "gaussianutility.out2com:main"
+out2xyz = "gaussianutility.out2xyz:main"
+spectrum = "gaussianutility.spectrum:main"
+gibbsTemp = "gaussianutility.gibbsTemp:main"
+printE = "gaussianutility.printE:main"
+freezeLayer = "gaussianutility.freezeLayer:main"
+sortInput = "gaussianutility.sortInput:main"
+
+
 
 
 
