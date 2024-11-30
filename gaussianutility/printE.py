@@ -10,10 +10,9 @@ def parse_args():
                      "enthalpy, and Gibbs free energy from Gaussian output file(s) after frequency calculation\n"
                      "with some other structural information\n\n"
                      "Print the following values on terminal:\n"
-                     "  File_name, Stoichiometry(*charge *multiplicity), E, E+ZPE, H, G, *number of imaginary frequencies\n"
+                     "  File_name, Stoichiometry(*charge *multiplicity), E, E+ZPE, H, G, number of imaginary frequencies\n"
                      "    *charge: printed with a sign (+ or -) if not charge-neutral\n"
                      "    *multiplicity: printed if not singlet\n"
-                     "    *number of imaginary frequencies: printied if exist"
                      , formatter_class=RawTextHelpFormatter)
 
     parser.add_argument('file_name', nargs='+', help='Gaussian output file(s) (.out or .log)')
