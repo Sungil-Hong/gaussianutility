@@ -16,7 +16,7 @@ def parse_args():
                      "    *number of imaginary frequencies: printied if exist"
                      , formatter_class=RawTextHelpFormatter)
 
-    parser.add_argument('file_name', nargs='+', help='Gaussian output file(s) (.out)')
+    parser.add_argument('file_name', nargs='+', help='Gaussian output file(s) (.out or .log)')
     args = parser.parse_args()
     return args
     

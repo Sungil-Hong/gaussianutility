@@ -123,8 +123,8 @@ def readoutput(file_name, stepIdx = -1):
     """
     # Check input file
     name, input_format = file_name.rsplit(".", 1)
-    if input_format != 'out':
-        raise TypeError('The input file format must be .out')
+    if input_format not in ['out', 'log']:
+        raise TypeError('The input file format must be .out or .log')
 
     # Read file
     with open(file_name, 'r') as inputfile:
