@@ -6,13 +6,12 @@ from argparse import RawTextHelpFormatter
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description= "Print electronic energy, electronic energy with zero-point correction,\n"
-                     "enthalpy, and Gibbs free energy from Gaussian output file(s) after frequency calculation\n"
-                     "with some other structural information\n\n"
+        description= "Print electronic energy and thermochemistry results (if applicable)from Gaussian output file(s)\n"
                      "Print the following values on terminal:\n"
-                     "  File_name, Stoichiometry(*charge *multiplicity), E, E+ZPE, H, G, number of imaginary frequencies\n"
-                     "    *charge: printed with a sign (+ or -) if not charge-neutral\n"
-                     "    *multiplicity: printed if not singlet\n"
+                     "  File_name, Stoichiometry(*charge *multiplicity)\n"
+                     "     Calculation type, E, E+ZPE, H, G, number of imaginary frequencies\n\n"
+                     "*charge: print with a sign (+ or -) if not neutral\n"
+                     "*multiplicity: print if not in singlet spin state\n"
                      , formatter_class=RawTextHelpFormatter)
 
     parser.add_argument('file_name', nargs='+', help='Gaussian output file(s) (.out or .log)')
