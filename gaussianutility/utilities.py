@@ -139,7 +139,7 @@ def readoutput(file_name, stepIdx = -1):
     route = []
     for line in lines[idx_route:]:
         route.append(line.strip('\n'))
-        if "----------------------------" in line:
+        if line.startswith(" --"):
             break
 
     route = route[:-1]
