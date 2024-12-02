@@ -19,6 +19,8 @@ def parse_args():
     parser.add_argument('-i', '--index', nargs='?', const=1, \
     help='Optimization step index;\n0 for input, -1 for the last geometry, '+\
          'and L for the lowest energy geometry', default=-1)
+    parser.add_argument('-n', '--name', nargs=1, required=False, \
+    help='Provide name of the generated Gaussian input file including extension')
     args = parser.parse_args()
     return args
     
@@ -30,7 +32,11 @@ def main():
     routeStr, charge_mult, df_geom = readoutput(file_name, stepIdx)
 
     # Write .com file
-    out_file = file_name.rsplit(".",1)[0] + "_geom.com"
+    if args.name is not None:
+        out_file = args.name[0]
+    else:
+        out_file = file_name.rsplit(".",1)[0] + "_geom.com"
+
     with open(out_file, 'w') as output:
         output.write(f"{routeStr}\n\n")
         output.write(f"{out_file}\n\n")
