@@ -2,6 +2,7 @@
 
 import numpy as np
 import pandas as pd
+import sys
 from periodictable import elements
 
 """
@@ -246,6 +247,9 @@ def readoutput(file_name, stepIdx = -1):
 
     if any(word in routeStr for word in ["freq","Freq","FREQ"]):
         optLineNo.pop(-1)
+    
+    if not optLineNo:
+        sys.exit("No optimization step proceeded successfully - check output file.")
 
     geom = []
     for line in lines[optLineNo[stepIdx]+4:]:
