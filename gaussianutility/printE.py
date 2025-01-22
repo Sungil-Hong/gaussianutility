@@ -109,8 +109,8 @@ def main():
                     print(f"   {i+1} calc: {result['job type']}  {result['E']}")
     
                 
-    if "Normal" not in lines[-1].split():
-        print("!!!Caution: The calculation does not seem to be normally ternimated!!!")
+        if "Normal" not in lines[-1].split():
+            print("!!!Caution: The calculation does not seem to be normally ternimated!!!")
 
 
 if __name__ == '__main__':
