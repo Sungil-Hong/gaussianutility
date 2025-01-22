@@ -77,6 +77,7 @@ def main():
         with open(file_name, 'r') as file:
             lines = file.readlines()
 
+<<<<<<< HEAD
         #if "Normal" not in lines[-1].split():
         #    calc_E = [read_E(lines)]
         #    print("Results of " + file_name + ", " + calc_E[0]['stoich'])
@@ -84,6 +85,21 @@ def main():
         #    print(f"   1 calc: {calc_E[0]['job type']}  {calc_E[0]['E']}")
         #
         #else:        
+=======
+        try:
+            lines[-1]
+        except IndexError:
+            print("!!!Caution: " + file_name + " is an empty file.")
+            continue
+
+        if "Normal" not in lines[-1].split():
+            calc_E = [read_E(lines)]
+            print("Results of " + file_name + ", " + calc_E[0]['stoich'])
+            print("!!!Caution: The calculation does not seem to be normally ternimated!!!")
+            print(f"   1 calc: {calc_E[0]['job type']}  {calc_E[0]['E']}")
+
+        else:        
+>>>>>>> 4f8a273 (Enable printE handle an empty file)
         ### Divide multiple calculation steps ###
         #    linked_jobs_idx = [0]
         #    for idx, line in enumerate(lines):
