@@ -77,6 +77,15 @@ def main():
         with open(file_name, 'r') as file:
             lines = file.readlines()
 
+<<<<<<< HEAD
+        #if "Normal" not in lines[-1].split():
+        #    calc_E = [read_E(lines)]
+        #    print("Results of " + file_name + ", " + calc_E[0]['stoich'])
+        #    print("!!!Caution: The calculation does not seem to be normally ternimated!!!")
+        #    print(f"   1 calc: {calc_E[0]['job type']}  {calc_E[0]['E']}")
+        #
+        #else:        
+=======
         try:
             lines[-1]
         except IndexError:
@@ -90,24 +99,24 @@ def main():
             print(f"   1 calc: {calc_E[0]['job type']}  {calc_E[0]['E']}")
 
         else:        
+        ### Divide multiple calculation steps ###
+            linked_jobs_idx = [0]
+            for idx, line in enumerate(lines):
+                if line.startswith(" Normal"):
+                    linked_jobs_idx.append(idx)
+        
+            ### Read data of each job ###
+            calc_lines = [lines[linked_jobs_idx[i]:linked_jobs_idx[i+1]+2] for i in range(len(linked_jobs_idx)-1)]
+            calc_E = [read_E(calc) for calc in calc_lines]
+            print("Results of " + file_name + ", " + calc_E[0]['stoich'])
+        
+            for i in range(len(calc_E)):
+                result = calc_E[i]
+                if result['job type'] == 'frequency':
+                    print(f"   {i+1} calc: {result['job type']}  {result['E']}  {result['EZPE']}  {result['H']}  {result['G']}  {result['imagf']}")
+                else:
+                    print(f"   {i+1} calc: {result['job type']}  {result['E']}")
     
-    ### Divide multiple calculation steps ###
-        linked_jobs_idx = [0]
-        for idx, line in enumerate(lines):
-            if line.startswith(" Normal"):
-                linked_jobs_idx.append(idx)
-    
-        ### Read data of each job ###
-        calc_lines = [lines[linked_jobs_idx[i]:linked_jobs_idx[i+1]+2] for i in range(len(linked_jobs_idx)-1)]
-        calc_E = [read_E(calc) for calc in calc_lines]
-        print("Results of " + file_name + ", " + calc_E[0]['stoich'])
-    
-        for i in range(len(calc_E)):
-            result = calc_E[i]
-            if result['job type'] == 'frequency':
-                print(f"   {i+1} calc: {result['job type']}  {result['E']}  {result['EZPE']}  {result['H']}  {result['G']}  {result['imagf']}")
-            else:
-                print(f"   {i+1} calc: {result['job type']}  {result['E']}")
                 
     if "Normal" not in lines[-1].split():
         print("!!!Caution: The calculation does not seem to be normally ternimated!!!")
