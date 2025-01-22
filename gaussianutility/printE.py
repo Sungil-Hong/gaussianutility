@@ -77,15 +77,6 @@ def main():
         with open(file_name, 'r') as file:
             lines = file.readlines()
 
-<<<<<<< HEAD
-        #if "Normal" not in lines[-1].split():
-        #    calc_E = [read_E(lines)]
-        #    print("Results of " + file_name + ", " + calc_E[0]['stoich'])
-        #    print("!!!Caution: The calculation does not seem to be normally ternimated!!!")
-        #    print(f"   1 calc: {calc_E[0]['job type']}  {calc_E[0]['E']}")
-        #
-        #else:        
-=======
         try:
             lines[-1]
         except IndexError:
