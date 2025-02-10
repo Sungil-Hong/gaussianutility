@@ -41,7 +41,7 @@ def readinput(file_name):
         idx_route += 1
 
     connectIdx = "geom=connectivity" in route
-            
+
     # Title and charge/multiplicity
     title = lines[idx_route+2]
     charge_mult = lines[idx_route+4]
@@ -52,15 +52,15 @@ def readinput(file_name):
         geom.append(line.split())
         geomEndIdx = idx_route+idx+5
         if len(line) <= 2: break
-        
+
     geom = list(filter(None, geom))
-    
+
     connectivity = []
     if connectIdx:
         for idx, line in enumerate(lines[geomEndIdx:]):
             if line.startswith("1") or line.startswith(" 1"):
                 break
-        
+
         connectIdx = geomEndIdx + idx
         for line in lines[connectIdx:]:
             connectivity.append(line)
@@ -81,14 +81,14 @@ def readinput(file_name):
                 clmnName.append(name)
 
             df_geom = pd.DataFrame(geom, columns = clmnName)
-            
+
             if np.sum(np.mod(np.array(df_geom.iloc[:,1], dtype=float),1)) == 0:
                 df_geom = df_geom.iloc[:,0:6]
                 df_geom = df_geom.rename({'C0':'Atom', 'C1':'Index', 'C2':'x', 'C3':'y', 'C4':'z', 'C5':'ONIOM_layer'}, axis='columns')
             else:
                 df_geom = df_geom.iloc[:,0:5]
                 df_geom = df_geom.rename({'C0':'Atom', 'C1':'x', 'C2':'y', 'C3':'z', 'C4':'ONIOM_layer'}, axis='columns')
-                
+
     else:
         lineLen = 0
         for line in geom:
@@ -102,14 +102,35 @@ def readinput(file_name):
                 clmnName.append(name)
 
             df_geom = pd.DataFrame(geom, columns = clmnName)
-            
-            if np.sum(np.mod(np.array(df_geom.iloc[:,1], dtype=float),1)) == 0:
-                df_geom = df_geom.iloc[:,0:5]
-                df_geom = df_geom.rename({'C0':'Atom', 'C1':'Index', 'C2':'x', 'C3':'y', 'C4':'z'}, axis='columns')
+
+            if lineLen == 5:
+                #Check if the geometry has periodic boundaries
+                if 'Tv' in np.array(df_geom['C0']):
+                    df_geom = df_geom.loc[df_geom['C0'] != 'Tv']
+                    boundary_flag = True
+                
+                #Check if the second column is -1 and 0 only, which is index for fixing atomic positions
+                if np.sum(np.mod(np.array(df_geom.iloc[:,1], dtype=float),1)) == 0:
+                    if boundary_flag:
+                        df_geom = pd.DataFrame(geom, columns = clmnName)
+                        #Divide the dataframe into two parts, atoms and boundaries
+                        df_geom_atoms = df_geom.loc[df_geom['C0'] != 'Tv']
+                        df_geom_boundary = df_geom.loc[df_geom['C0'] == 'Tv']
+                        df_geom_boundary = df_geom_boundary.iloc[:, :-1]
+                        df_geom_boundary.insert(loc=1, column='Index', value=[None, None, None])
+                        df_geom_atoms = df_geom_atoms.rename({'C0':'Atom', 'C1':'Index', 'C2':'x', 'C3':'y', 'C4':'z'}, axis='columns')
+                        df_geom_boundary = df_geom_boundary.rename({'C0':'Atom', 'Index':'Index', 'C1':'x', 'C2':'y', 'C3':'z'}, axis='columns')
+                        df_geom = pd.concat([df_geom_atoms, df_geom_boundary])
+                    else:
+                        df_geom = df_geom.rename({'C0':'Atom', 'C1':'Index', 'C2':'x', 'C3':'y', 'C4':'z'}, axis='columns')
+                else:
+                    df_geom = df_geom.iloc[:,0:4]
+                    df_geom = df_geom.rename({'C0':'Atom', 'C1':'x', 'C2':'y', 'C3':'z'}, axis='columns')
+
             else:
                 df_geom = df_geom.iloc[:,0:4]
-                df_geom = df_geom.rename({'C0':'Atom', 'C1':'x', 'C2':'y', 'C3':'z'}, axis='columns')            
-                
+                df_geom = df_geom.rename({'C0':'Atom', 'C1':'x', 'C2':'y', 'C3':'z'}, axis='columns')
+
     df_geom['Atom'] = np.array([atomSb.split('-')[0] for atomSb in list(df_geom['Atom'])])
     
     return route, title, charge_mult, df_geom, connectivity
