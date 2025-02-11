@@ -58,9 +58,9 @@ def vasp_2_com(file_name):
         flags_for_gaussian = []
         for flag in flags:
             if np.unique(flag) == 'T':
-                flags_for_gaussian.append('-1')
-            elif np.unique(flag) == 'F':
                 flags_for_gaussian.append('0')
+            elif np.unique(flag) == 'F':
+                flags_for_gaussian.append('-1')
             else:
                 raise TypeError('Supported selective dynamics flags are only T,T,T and F,F,F.')
     
