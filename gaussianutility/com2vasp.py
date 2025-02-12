@@ -35,13 +35,13 @@ def com_2_vasp(file_name, ctype):
     if not 'Tv' in df_geom['Atom'].values:
         raise ValueError('The provided Gaussian input file does not contain lattice information')
 
-    lattice = df_geom[-3:].drop(['Atom'], axis=1)
+    lattice = np.array(df_geom[-3:].drop(['Atom'], axis=1), dtype=float)
     df_geom = df_geom.drop(df_geom[df_geom['Atom'] == 'Tv'].index)
     atomlist = np.array(df_geom['Atom'])
         
     if ctype == 'd':
         cart_coords = np.array(df_geom[['x','y','z']], dtype=float)
-        lattice_inv = np.linalg.inv(np.array(lattice, dtype=float))
+        lattice_inv = np.linalg.inv(lattice)
         direct_coords = np.dot(cart_coords, lattice_inv)
 
         df_geom['x'] = direct_coords[:,0]
@@ -76,6 +76,9 @@ def com_2_vasp(file_name, ctype):
     name = ".".join(file_name.rsplit(".",1)[0:-1])
     out_file = name + ".vasp"
     df_geom = df_geom.drop(['Atom'], axis=1)
+    
+    lattice = pd.DataFrame(lattice).map(lambda x: '{0:.16f}'.format(x))
+    df_geom[['x', 'y', 'z']] = df_geom[['x', 'y', 'z']].map(lambda x: '{0:.16f}'.format(x))
 
     with open(out_file, 'w') as output:
         output.write(name + '\n')

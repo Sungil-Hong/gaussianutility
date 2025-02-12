@@ -25,9 +25,8 @@ def vasp_2_com(file_name):
     
     lattice_scailing_factor = float(lines[1].split()[0])
     
-    lattice_vector = [line.split() for line in lines[2:5]]
-    lattice_vector = np.array(lattice_vector, dtype = float)
-    
+    lattice = [line.split() for line in lines[2:5]]
+    lattice = np.array(lattice, dtype = float)
     elem_type = lines[5].split()
     
     elem_num = np.array(list(map(int, lines[6].split())))
@@ -50,7 +49,7 @@ def vasp_2_com(file_name):
         if lines[8].split()[0].lower() == 'cartesian':
             geom *= lattice_scailing_factor
         elif lines[8].split()[0].lower() == 'direct':
-            geom = np.dot(geom, lattice_vector) * lattice_scailing_factor
+            geom = np.dot(geom, lattice) * lattice_scailing_factor
         else:
             raise TypeError('Cannot read geometry type parameter - It should be either cartesian or direct.')
             
@@ -82,14 +81,17 @@ def vasp_2_com(file_name):
         if lines[7].split()[0].lower() == 'cartesian':
             geom *= lattice_scailing_factor
         elif lines[7].split()[0].lower() == 'direct':
-            geom = np.dot(geom, lattice_vector) * lattice_scailing_factor
+            geom = np.dot(geom, lattice) * lattice_scailing_factor
         else:
             raise TypeError('Cannot read geometry type parameter - It should be either cartesian or direct.')
     
         df_geom = pd.DataFrame(geom, columns = ['x', 'y', 'z'])
         df_geom.insert(loc=0, column='element', value=elem_list)
     
-
+    df_geom[['x', 'y', 'z']] = df_geom[['x', 'y', 'z']].map(lambda x: '{0:.16f}'.format(x))
+  
+    lattice = pd.DataFrame(lattice, columns = ['x', 'y', 'z']).map(lambda x: '{0:.16f}'.format(x))
+    lattice.insert(loc=0, column='element', value=['Tv', 'Tv', 'Tv'])
 
     # Write .com file
     out_file = file_name.rsplit(".",1)[0] + ".com"
@@ -97,10 +99,8 @@ def vasp_2_com(file_name):
         output.write('# pbepbe/3-21g/auto\n\n')
         output.write(f'{file_name.rsplit(".", 1)[0]}\n\n')
         output.write(f'0 {multiplicity}\n')
-        output.write(df_geom.to_string(index=False, header=False) + '\n')
-        output.write('Tv ' + lines[2])
-        output.write('Tv ' + lines[3])
-        output.write('Tv ' + lines[4])
+        output.write(df_geom.to_csv(index=False, header=False, sep='\t'))
+        output.write(lattice.to_csv(index=False, header=False, sep='\t'))
         output.write('\n')
 
 
