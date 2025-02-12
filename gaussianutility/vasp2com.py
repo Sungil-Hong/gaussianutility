@@ -69,7 +69,16 @@ def vasp_2_com(file_name):
         df_geom.insert(loc=0, column='element', value=elem_list)
         
     else:
-        geom = np.array([line.split() for line in lines[8:] if len(line.split()) >= 2], dtype='float_')
+        geom_lines = []
+        for line in lines[8:]:
+            if len(line.split()) <= 2:
+                break
+                
+            geom_lines.append(line.split())
+    
+        geom_lines = np.array(geom_lines)
+        geom = np.array(geom_lines[:,:3], dtype=float)
+
         if lines[7].split()[0].lower() == 'cartesian':
             geom *= lattice_scailing_factor
         elif lines[7].split()[0].lower() == 'direct':
