@@ -20,6 +20,8 @@ def com_2_xyz(file_name):
     _, _, _, df_geom, _ = readinput(file_name)
     df_geom = df_geom[['Atom', 'x', 'y', 'z']]
     df_geom['Atom'] = np.array([i.rsplit("-",1)[0] for i in list(df_geom['Atom'])])
+    
+    df_geom = df_geom.loc[df_geom['Atom'] != 'Tv'] 
     elem_len = str(len(df_geom))
 
     # Write xyz file
