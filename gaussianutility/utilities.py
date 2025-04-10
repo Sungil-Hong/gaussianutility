@@ -266,11 +266,11 @@ def readoutput(file_name, stepIdx = -1):
             if "Input orientation" in line:
                 optLineNo.append(idx+1)
 
-    if any(word in routeStr for word in ["freq","Freq","FREQ"]):
-        optLineNo.pop(-1)
+    #if any(word in routeStr for word in ["freq","Freq","FREQ"]):
+    #    optLineNo.pop(-1)
     
-    if not optLineNo:
-        sys.exit("No optimization step proceeded successfully - check output file.")
+    #if not optLineNo:
+    #    sys.exit("No optimization step proceeded successfully - check output file.")
 
     geom = []
     for line in lines[optLineNo[stepIdx]+4:]:
