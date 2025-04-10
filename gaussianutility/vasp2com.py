@@ -88,9 +88,9 @@ def vasp_2_com(file_name):
         df_geom = pd.DataFrame(geom, columns = ['x', 'y', 'z'])
         df_geom.insert(loc=0, column='element', value=elem_list)
     
-    df_geom[['x', 'y', 'z']] = df_geom[['x', 'y', 'z']].map(lambda x: '{0:.16f}'.format(x))
+    df_geom[['x', 'y', 'z']] = df_geom[['x', 'y', 'z']].applymap(lambda x: '{0:.16f}'.format(x))
   
-    lattice = pd.DataFrame(lattice, columns = ['x', 'y', 'z']).map(lambda x: '{0:.16f}'.format(x))
+    lattice = pd.DataFrame(lattice, columns = ['x', 'y', 'z']).applymap(lambda x: '{0:.16f}'.format(x))
     lattice.insert(loc=0, column='element', value=['Tv', 'Tv', 'Tv'])
 
     # Write .com file
