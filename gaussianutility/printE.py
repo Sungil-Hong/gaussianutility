@@ -46,11 +46,20 @@ def read_E(lines):
 
     if job_type == 'frequency':
         for line in lines[idx:]:
-            if "zero-point Energies" in line: EZPE = line.split()[6]
-            if "thermal Enthalpies" in line: H = line.split()[6]
-            if "thermal Free Energies" in line: G = line.split()[7]
-            if "imaginary frequencies ignored" in line: imagf = line.split()[0]
-            else: imagf = '0'
+            if "zero-point Energies" in line:
+                EZPE = line.split()[6]
+
+            if "thermal Enthalpies" in line: 
+                H = line.split()[6]
+
+            if "thermal Free Energies" in line:
+                G = line.split()[7]
+
+            if "imaginary frequencies ignored" in line:
+                imagf = line.split()[0]
+            
+        if not imagf:
+            imagf = '0'
         
         return {
             'stoich': stoich,
