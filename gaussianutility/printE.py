@@ -21,46 +21,75 @@ def parse_args():
 def read_E(lines):
     stoich, E, EZPE, H, G, imagf = '', '', '', '', '', ''
 
+    # Stoichiometry
     for line in lines:
-        if "Stoichiometry" in line: 
+        if "Stoichiometry" in line:
             stoich = line.split()[1]
             break
-    
+
+    # Try SCF energy first
     for idx, line in reversed(list(enumerate(lines))):
-        if "SCF Done" in line: 
+        if "SCF Done" in line:
             E = line.split()[4]
             break
-        
+    else:
+        # If no SCF found, start scanning from the beginning
+        idx = 0
+
+    # Determine job type
     job_type = None
     for line in lines[idx:]:
         if "Thermochemistry" in line:
             job_type = 'frequency'
             break
-            
         if "Stationary point found" in line:
             job_type = 'optimization'
             break
-        
-    if job_type == None:
+    if job_type is None:
         job_type = 'single-point'
 
     if job_type == 'frequency':
-        for line in lines[idx:]:
-            if "zero-point Energies" in line:
-                EZPE = line.split()[6]
+        # For UFF or cases without SCF Done, back-compute E from thermochemistry
+        zpe_corr = None
+        sum_e_zpe = None
 
-            if "thermal Enthalpies" in line: 
+        for line in lines[idx:]:
+            # Sum lines
+            if "Sum of electronic and zero-point Energies" in line:
+                # Numeric field is token index 6
+                EZPE = line.split()[6]
+                try:
+                    sum_e_zpe = float(EZPE)
+                except ValueError:
+                    pass
+
+            if "Sum of electronic and thermal Enthalpies" in line:
                 H = line.split()[6]
 
-            if "thermal Free Energies" in line:
+            if "Sum of electronic and thermal Free Energies" in line:
                 G = line.split()[7]
 
+            # Zero-point correction (needed to back-compute E)
+            if "Zero-point correction=" in line:
+                # Numeric field is token index 2
+                tokens = line.split()
+                if len(tokens) >= 3:
+                    try:
+                        zpe_corr = float(tokens[2])
+                    except ValueError:
+                        pass
+
+            # Imaginary frequencies count (if present)
             if "imaginary frequencies ignored" in line:
                 imagf = line.split()[0]
-            
+
         if not imagf:
             imagf = '0'
-        
+
+        # Back-compute electronic energy if SCF was not found
+        if (not E) and (sum_e_zpe is not None) and (zpe_corr is not None):
+            E = f"{sum_e_zpe - zpe_corr:.6f}"
+
         return {
             'stoich': stoich,
             'job type': job_type,
